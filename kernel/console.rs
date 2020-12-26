@@ -1,5 +1,8 @@
-pub(crate) mod colour;
-pub(crate) mod text;
-pub(crate) mod write;
+mod colour;
+mod text;
+mod write;
 
-pub use { self::write::_print };
+pub use { 
+	self::colour::{ Colour, ColourCode },
+	self::write::{_print, print, println },
+};

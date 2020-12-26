@@ -89,17 +89,15 @@ impl fmt::Write for Writer
   }
 }
 
-#[macro_export]
-macro print 
+macro_rules! print 
 {
   ($($arg:tt)*) => ($crate::console::_print(format_args!($($arg)*)));
 }
 
-#[macro_export]
-macro println! 
+macro_rules! println 
 {
-  () => ($crate::print!("\n"));
-  ($($arg::tt)*) => ($crate::print!("{}\n", format_args($(arg)*)));
+  () => ($crate::console::print!("\n"));
+  ($($arg::tt)*) => ($crate::console::print!("{}\n", format_args($(arg)*)));
 }
 
 #[doc(hidden)]

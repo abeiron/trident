@@ -7,10 +7,14 @@ The Trident Exokernel
 */
 
 // core kernel lbrary
-#[macro_use] pub(crate) extern crate t_xkernel_core as kernel;
+pub(crate) extern crate t_xkernel_core as kernel;
 
 #[no_mangle]
 pub extern "C" fn kmain() -> !
 {
+	use kernel::console;
+
+	console::println!("Hello, world!");
+
   loop {}
 }

@@ -71,10 +71,11 @@ dependencies = [
 ]
 
 [[package]]
-name = "t_xkernel"
+name = "t_xkernel_core"
 version = "0.1.0"
 dependencies = [
  "lazy_static",
+ "linked_list_allocator",
  "slab_allocator",
  "spin 0.7.0",
  "spinning_top",
@@ -85,7 +86,7 @@ dependencies = [
 name = "trident"
 version = "0.1.0"
 dependencies = [
- "t_xkernel",
+ "t_xkernel_core",
 ]
 
 [[package]]
