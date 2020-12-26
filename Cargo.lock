@@ -11,15 +11,6 @@ dependencies = [
 
 [[package]]
 name = "linked_list_allocator"
-version = "0.6.6"
-source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "47de1a43fad0250ee197e9e124e5b5deab3d7b39d4428ae8a6d741ceb340c362"
-dependencies = [
- "spin 0.5.2",
-]
-
-[[package]]
-name = "linked_list_allocator"
 version = "0.8.8"
 source = "registry+https://github.com/rust-lang/crates.io-index"
 checksum = "4e6766dff3bf932e0d1c7f1cf27c0a46008f7839f85b015a312c276a4570a399"
@@ -41,22 +32,6 @@ name = "scopeguard"
 version = "1.1.0"
 source = "registry+https://github.com/rust-lang/crates.io-index"
 checksum = "d29ab0c6d3fc0ee92fe66e2d99f700eab17a8d57d1c1d3b748380fb20baa78cd"
-
-[[package]]
-name = "slab_allocator"
-version = "0.3.5"
-source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "84b23a7a49492db597d7a0dda8a109ea944cf603094dd1c6225179c1ffed357b"
-dependencies = [
- "linked_list_allocator 0.6.6",
- "spin 0.4.10",
-]
-
-[[package]]
-name = "spin"
-version = "0.4.10"
-source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "ceac490aa12c567115b40b7b7fceca03a6c9d53d5defea066123debc83c5dc1f"
 
 [[package]]
 name = "spin"
@@ -84,8 +59,7 @@ name = "t_xkernel_core"
 version = "0.1.0"
 dependencies = [
  "lazy_static",
- "linked_list_allocator 0.8.8",
- "slab_allocator",
+ "linked_list_allocator",
  "spin 0.7.0",
  "volatile",
 ]

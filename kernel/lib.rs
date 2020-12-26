@@ -4,15 +4,14 @@
 #![cfg_attr(not(test), no_std)]
 #![feature(
 	panic_info_message, 
-	asm, 
+	llvm_asm, 
 	decl_macro
 )]
 /*!*/
 
+// Lazy static initialisation
 #[macro_use] extern crate lazy_static;
 
-// slab allocator
-extern crate slab_allocator;
 // Phil Opp's linked list allocator for no_std projects
 extern crate linked_list_allocator;
 

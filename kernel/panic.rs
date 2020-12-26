@@ -1,3 +1,4 @@
+use crate::console;
 use core::panic::PanicInfo;
 
 #[no_mangle] 
@@ -6,10 +7,10 @@ extern "C" fn eh_personality() {}
 #[panic_handler]
 fn panic(info: &PanicInfo) -> ! 
 {
-  print!("Aborting:   ");
+  console::print!("Aborting:   ");
 
   if let Some(p) = info.location() {
-    println!(
+    console::println!(
       "line {}, file {}: {}",
       p.line(),
       p.file(),
@@ -17,7 +18,7 @@ fn panic(info: &PanicInfo) -> !
     );
   }
   else {
-    print!("No information available.");
+    console::print!("No information available.");
   }
 
   self::abort();
@@ -28,7 +29,7 @@ pub extern "C" fn abort() -> !
 {
   loop {
     unsafe {
-      asm!("wfi"::::"volatile");
+      llvm_asm!("wfi"::::"volatile");
     }
   }
 }

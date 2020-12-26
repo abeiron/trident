@@ -1,6 +1,6 @@
+use super::{colour::*, text::*};
 use core::fmt;
 use spin::Mutex;
-use super::{colour::*, text::*};
 
 lazy_static! {
   pub static ref GLOBAL_WRITER: Mutex<Writer> = Mutex::new(Writer {
@@ -24,15 +24,15 @@ impl Writer
     match byte {
       b'\n' => self.new_line(),
       byte => {
-        if self.col_pos >= BUFF_WIDTH {
+        if self.col_pos >= BUF_WIDTH {
           self.new_line();
         }
 
-        let row = BUFF_HEIGHT - 1;
+        let row = BUF_HEIGHT - 1;
         let col = self.col_pos;
 
         let colour_code = self.colour_code;
-        self.buffer.chars[row][col].write(ScreenChar {
+        self.buf.chars[row][col].write(ScreenChar {
           ascii_char: byte,
           colour_code,
         });
@@ -55,14 +55,14 @@ impl Writer
 
   fn new_line(&mut self) 
   {
-    for row in 1..BUFF_HEIGHT {
-      for col in 0..BUFF_WIDTH {
-        let character = self.buffer.chars[row][col].read();
-        self.buffer.chars[row - 1][col].write(character);
+    for row in 1..BUF_HEIGHT {
+      for col in 0..BUF_WIDTH {
+        let character = self.buf.chars[row][col].read();
+        self.buf.chars[row - 1][col].write(character);
       }
     }
 
-    self.clear_row(BUFF_HEIGHT - 1);
+    self.clear_row(BUF_HEIGHT - 1);
     self.col_pos = 0;
   }
 
@@ -72,15 +72,15 @@ impl Writer
       ascii_char: b' ',
       colour_code: self.colour_code,
     };
-    for col in 0..BUFF_WIDTH {
-      self.buffer.chars[row][col].write(blank);
+    for col in 0..BUF_WIDTH {
+      self.buf.chars[row][col].write(blank);
     }
   }
 }
 
 impl fmt::Write for Writer
 {
-  fn write_str(&mut self, s: &str) -> fmt::Result<()>
+  fn write_str(&mut self, s: &str) -> fmt::Result
   {
     self.write_string(s);
 
@@ -89,15 +89,15 @@ impl fmt::Write for Writer
   }
 }
 
-macro_rules! print 
+pub macro print 
 {
-  ($($arg:tt)*) => ($crate::console::_print(format_args!($($arg)*)));
+  ($($arg:tt)*) => ($crate::console::_print(format_args!($($arg)*)))
 }
 
-macro_rules! println 
+pub macro println 
 {
-  () => ($crate::console::print!("\n"));
-  ($($arg::tt)*) => ($crate::console::print!("{}\n", format_args($(arg)*)));
+  () => ($crate::console::print!("\n")),
+  ($($arg::tt)*) => ($crate::console::print!("{}\n", format_args($(arg)*)))
 }
 
 #[doc(hidden)]
