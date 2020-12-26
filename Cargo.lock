@@ -19,10 +19,19 @@ dependencies = [
 ]
 
 [[package]]
-name = "lock_api"
-version = "0.4.2"
+name = "linked_list_allocator"
+version = "0.8.8"
 source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "dd96ffd135b2fd7b973ac026d28085defbe8983df057ced3eb4f2130b0831312"
+checksum = "4e6766dff3bf932e0d1c7f1cf27c0a46008f7839f85b015a312c276a4570a399"
+dependencies = [
+ "spinning_top",
+]
+
+[[package]]
+name = "lock_api"
+version = "0.3.4"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+checksum = "c4da24a77a3d8a6d4862d95f72e6fdb9c09a643ecdb402d754004a557f2bec75"
 dependencies = [
  "scopeguard",
 ]
@@ -39,7 +48,7 @@ version = "0.3.5"
 source = "registry+https://github.com/rust-lang/crates.io-index"
 checksum = "84b23a7a49492db597d7a0dda8a109ea944cf603094dd1c6225179c1ffed357b"
 dependencies = [
- "linked_list_allocator",
+ "linked_list_allocator 0.6.6",
  "spin 0.4.10",
 ]
 
@@ -63,9 +72,9 @@ checksum = "652ac3743312871a5fb703f0337e68ffa3cdc28c863efad0b8dc858fa10c991b"
 
 [[package]]
 name = "spinning_top"
-version = "0.2.2"
+version = "0.1.1"
 source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "7e529d73e80d64b5f2631f9035113347c578a1c9c7774b83a2b880788459ab36"
+checksum = "047031d6df5f5ae0092c97aa4f6bb04cfc9c081b4cd4cb9cdb38657994279a00"
 dependencies = [
  "lock_api",
 ]
@@ -75,10 +84,9 @@ name = "t_xkernel_core"
 version = "0.1.0"
 dependencies = [
  "lazy_static",
- "linked_list_allocator",
+ "linked_list_allocator 0.8.8",
  "slab_allocator",
  "spin 0.7.0",
- "spinning_top",
  "volatile",
 ]
 
@@ -91,6 +99,6 @@ dependencies = [
 
 [[package]]
 name = "volatile"
-version = "0.4.2"
+version = "0.4.3"
 source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "8b53d47a0f279fc0a9d9d1d82f4c6f313eb63b73e2a85d9c27fd609084cfa08f"
+checksum = "8a9dc439ba8353e28f34356cf26f7847e5f15f33ccedde090278fa8ff08f4e10"

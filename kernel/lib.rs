@@ -17,7 +17,6 @@ extern crate slab_allocator;
 extern crate linked_list_allocator;
 
 pub(crate) extern crate spin;
-pub(crate) extern crate spinning_top;
 pub(crate) extern crate volatile;
 
 pub mod console;
