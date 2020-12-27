@@ -91,13 +91,13 @@ impl fmt::Write for Writer
 
 pub macro print 
 {
-  ($($arg:tt)*) => ($crate::console::_print(format_args!($($arg)*)))
+  ($($arg:tt)*) => ($crate::_print(format_args!($($arg)*)))
 }
 
 pub macro println 
 {
-  () => ($crate::console::print!("\n")),
-  ($($arg::tt)*) => ($crate::console::print!("{}\n", format_args($(arg)*)))
+  () => ($crate::print!("\n")),
+  ($($arg:tt)*) => ($crate::print!("{}\n", format_args!($($arg)*)))
 }
 
 #[doc(hidden)]

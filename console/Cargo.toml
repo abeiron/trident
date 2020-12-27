@@ -1,5 +1,5 @@
 [package]
-name = "t_consolelib"
+name = "t_console"
 version = "0.1.0"
 authors = ["Mnimi Aionios <mechild02@gmail.com>"]
 edition = "2018"

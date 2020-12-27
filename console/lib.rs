@@ -1,7 +1,9 @@
 #![deny(clippy::all)]
-#![no_std]
+#![cfg_attr(not(test), no_std)]
 #![feature(
-	decl_macro
+	decl_macro,
+	llvm_asm,
+	panic_info_message,
 )]
 /*!*/
 
@@ -12,6 +14,7 @@ extern crate volatile;
 pub(crate) mod colour;
 pub(crate) mod text;
 pub(crate) mod write;
+mod panic;
 
 pub use self::colour::{Colour, ColourCode};
 pub use self::write::{_print, print, println};

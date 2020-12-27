@@ -5,8 +5,8 @@ use volatile::Volatile;
 #[repr(C)]
 pub struct ScreenChar
 {
-  ascii_char: u8,
-  colour_code: ColourCode,
+  pub ascii_char: u8,
+  pub colour_code: ColourCode,
 }
 
 pub const BUF_HEIGHT: usize = 25;

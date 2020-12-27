@@ -19,7 +19,6 @@ Trident is an exokernel system designed for performance, stability, and modulari
 extern crate linked_list_allocator;
 
 pub(crate) extern crate t_console as console;
-pub(crate) extern crate t_panic as panic;
 pub(crate) extern crate spin;
 pub(crate) extern crate volatile;
 
