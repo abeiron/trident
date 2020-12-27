@@ -60,7 +60,7 @@ version = "0.1.0"
 dependencies = [
  "lazy_static",
  "spin 0.7.0",
- "volatile",
+ "volatile 0.2.7",
 ]
 
 [[package]]
@@ -79,8 +79,14 @@ dependencies = [
  "spin 0.7.0",
  "t_consolelib",
  "t_paniclib",
- "volatile",
+ "volatile 0.4.3",
 ]
+
+[[package]]
+name = "volatile"
+version = "0.2.7"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+checksum = "f6b06ad3ed06fef1713569d547cdbdb439eafed76341820fb0e0344f29a41945"
 
 [[package]]
 name = "volatile"
