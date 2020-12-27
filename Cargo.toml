@@ -1,22 +1,8 @@
-[package]
-name = "trident"
-version = "0.1.0"
-authors = ["Adiákopi Mními <mechild02@gmail.com>"]
-edition = "2018"
-build = "build.rs"
-
-# See more keys and their definitions at https://doc.rust-lang.org/cargo/reference/manifest.html
-
-[lib]
-name = "t_xkernel"
-path = "lib.rs"
-
-[dependencies]
-t_xkernel_core = { path = "./kernel", version = "*" }
-
 [workspace]
 members = [
-	"kernel"
+	"console",
+	"kernel",
+	"panic",
 ]
 exclude = [
   "boot"

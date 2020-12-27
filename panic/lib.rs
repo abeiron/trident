@@ -1,4 +1,12 @@
-use crate::console;
+#![deny(clippy::all)]
+#![no_std]
+#![features(
+  panic_info_message, 
+  llvm_asm,
+)]
+
+extern crate t_console as console;
+
 use core::panic::PanicInfo;
 
 #[no_mangle] 
