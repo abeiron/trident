@@ -13,8 +13,7 @@ pub(crate) extern crate t_xkernel_core as kernel;
 pub extern "C" fn kmain() -> !
 {
 	use kernel::console;
-
 	console::println!("Hello, world!");
 
-  loop {}
+	loop {}
 }
