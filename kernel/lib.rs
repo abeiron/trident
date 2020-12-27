@@ -1,10 +1,8 @@
 #![deny(clippy::all)]
 #![cfg_attr(not(test), no_std)]
-#![feature(
-	panic_info_message, 
-	llvm_asm, 
-	decl_macro
-)]
+#![feature(decl_macro)]
+#![feature(llvm_asm)]
+#![feature(panic_info_message)]
 /*!
 # The Trident System
 ====================
@@ -28,5 +26,5 @@ mod test;
 #[no_mangle]
 pub extern "C" fn kmain() -> !
 {
-	loop {}
+  loop {}
 }
