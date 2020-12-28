@@ -3,7 +3,7 @@
 pub use self::layout::Layout;
 use core::ffi::c_void;
 use core::mem::size_of;
-use core::ptr::write_unaligned;
+use core::ptr::{read_unaligned, write_unaligned};
 
 pub mod global;
 pub mod heap;
@@ -13,14 +13,14 @@ pub mod slab;
 
 pub unsafe trait GlobalAlloc
 {
-	fn alloc(&self, layout: Layout) -> Option<*mut c_void>;
-	fn dealloc(&self, layout: Layout, ptr: *mut c_void);
+  unsafe fn alloc(&self, layout: Layout) -> Option<*mut c_void>;
+  unsafe fn dealloc(&self, ptr: *mut c_void);
 
-	fn alloc_aligned(&self, layout: Layout) -> Option<*mut c_void>
-	{
-		let actual_size = layout.size + layout.align - 1 + size_of::<usize>();
+  unsafe fn alloc_aligned(&self, layout: Layout) -> Option<*mut c_void>
+  {
+    let actual_size = layout.size + layout.align - 1 + size_of::<usize>();
 
-		let ptr = match self.alloc(Layout::new(actual_size))
+    let ptr = match self.alloc(Layout::new(actual_size))
     {
       Some(p) => p as usize,
       None => return None,
@@ -29,19 +29,19 @@ pub unsafe trait GlobalAlloc
     let aligned_ptr = layout.align_up(ptr + size_of::<usize>());
     let actual_ptr_ptr  = aligned_ptr - size_of::<usize>();
 
-		write_unaligned(actual_ptr_ptr as *mut usize, ptr);
+    write_unaligned(actual_ptr_ptr as *mut usize, ptr);
 
 
 
     Some(aligned_ptr as *mut c_void)
-	}
+  }
 
-	fn dealloc_aligned(&self, ptr: *mut c_void)
-	{
-		let aligned_ptr = ptr as usize;
+  unsafe fn dealloc_aligned(&self, ptr: *mut c_void)
+  {
+    let aligned_ptr = ptr as usize;
     let actual_ptr_ptr = aligned_ptr - size_of::<usize>();
     let actual_ptr = read_unaligned(actual_ptr_ptr as *const usize);
-        
+
     self.dealloc(actual_ptr as *mut c_void);
-	}
+  }
 }

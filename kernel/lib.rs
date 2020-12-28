@@ -16,7 +16,8 @@ Trident is an exokernel system designed for performance, stability, and modulari
 // Phil Opp's linked list allocator for no_std projects
 extern crate linked_list_allocator;
 
-pub(crate) extern crate t_console as console;
+pub(crate) extern crate t_alloc as _alloc;
+pub(crate) extern crate t_console as _console;
 pub(crate) extern crate spin;
 pub(crate) extern crate volatile;
 

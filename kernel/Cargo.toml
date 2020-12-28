@@ -3,11 +3,12 @@ name = "t_xkernel"
 version = "0.1.0"
 authors = ["Mnimi Aionios <mechild02@gmail.com>"]
 edition = "2018"
-build = "assemble.rs"
+build = "../assemble.rs"
 
 # See more keys and their definitions at https://doc.rust-lang.org/cargo/reference/manifest.html
 
 [dependencies]
+t_alloc = { path = "../alloc", version = "*" }
 t_console = { path = "../console", version = "*" }
 lazy_static = { version = "1.4.0", features = ["spin_no_std"] }
 linked_list_allocator = { version = "0.8.8", features = ["use_spin", "alloc_ref"] }
