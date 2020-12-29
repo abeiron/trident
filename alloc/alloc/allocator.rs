@@ -1,14 +1,13 @@
 //! `Allocator` type implementation.
 
 pub use self::layout::Layout;
-use alloc::alloc::{GlobalAlloc, Layout};
+
+use self::linked_list::LinkedListAllocator;
+
 use core::ffi::c_void;
 use core::mem::size_of;
-use core::ptr::null_mut;
-use linked_list::LinkedListAllocator;
-use linked_list_allocator::LockedHeap;
-
 use core::ptr::{read_unaligned, write_unaligned, NonNull};
+use linked_list_allocator::LockedHeap;
 
 pub mod global;
 pub mod heap;
