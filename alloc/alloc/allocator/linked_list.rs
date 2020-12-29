@@ -1,37 +1,44 @@
 use super::align_up;
-use core::mem;
 use super::Locked;
-use alloc::alloc::{GlobalAlloc, Layout};
+use core::mem;
 use core::ptr;
 
 ///Adds ListNode struct and implicates to start and end
-pub struct ListNode {
+pub struct ListNode
+{
   size: usize,
-  next: Option<&'static mut ListNode>
+  next: Option<&'static mut ListNode>,
 }
 
-impl ListNode {
-  pub const fn new(size: usize) -> Self {
+impl ListNode
+{
+  pub const fn new(size: usize) -> Self
+  {
     ListNode { size, next: None }
   }
 
-  pub fn start_addr(&self) -> usize {
+  pub fn start_addr(&self) -> usize
+  {
     self as *const Self as usize
   }
 
-  pub fn end_addr(&self) -> usize {
+  pub fn end_addr(&self) -> usize
+  {
     self.start_addr() + self.size
   }
 }
 
 ///adds LinkedListAllocater struct
-pub struct LinkedListAllocator {
+pub struct LinkedListAllocator
+{
   head: ListNode,
 }
 
-impl LinkedListAllocator {
+impl LinkedListAllocator
+{
   ///Creates an empty LinkedListAllocator.
-  pub const fn new() -> Self {
+  pub const fn new() -> Self
+  {
     Self {
       head: ListNode::new(0),
     }
@@ -41,12 +48,14 @@ impl LinkedListAllocator {
   ///This function is unsafe because the caller must guarantee that the given
   ///heap bounds are valid and that the heap is unused.  This method must be
   ///called only once.
-  pub unsafe fn init(&mut self, heap_start: usize, heap_size: usize) {
+  pub unsafe fn init(&mut self, heap_start: usize, heap_size: usize)
+  {
     self.add_free_region(heap_start, heap_size);
   }
 
   ///Adds the given memory region to the front of the list.
-  unsafe fn add_free_region(&mut self, addr: usize, size:usize) {
+  unsafe fn add_free_region(&mut self, addr: usize, size: usize)
+  {
     //ensure that the freed region is capable of holding ListNode
     assert_eq!(align_up(addr, mem::align_of::<ListNode>()), addr);
     assert!(size >= mem::size_of::<ListNode>());
@@ -58,73 +67,77 @@ impl LinkedListAllocator {
     node_ptr.write(node);
     self.head.next = Some(&mut *node_ptr)
   }
+
   /// Looks for a free region with the given size and alignment and removes
   /// it from the list.
-  /// 
+  ///
   /// Returns a tuple of the list node and the start address of the allocation.
-  fn find_region(&mut self, size: usize, align: usize) 
-      -> Option<(&'static mut Listnode, usize)>
+  fn find_region(&mut self, size: usize, align: usize) -> Option<(&'static mut Listnode, usize)>
   {
     // reference to current list node, updated for each iteration
     let mut current = &mut self.head;
     // look for a large enough memory region in linked list
     while let Some(ref mut region) = current.next {
       if let Ok(alloc_start) = Self::alloc_from_region(&region, size, align) {
-          // region suitable for allocation -> remove node from list
-          let next = region.next.take();
-          let ret = Some((current.next.take().unwrap(), alloc_start));
-          current.next = next;
-          return ret;
-        } else {
-          //  region not suitable -> continue with next region
-          current + current.next.as_mut().unwrap();
-        }
+        // region suitable for allocation -> remove node from list
+        let next = region.next.take();
+        let ret = Some((current.next.take().unwrap(), alloc_start));
+        current.next = next;
+        return ret;
+      } else {
+        //  region not suitable -> continue with next region
+        current + current.next.as_mut().unwrap();
+      }
       // no suitable region found
-      None  
+      None
     }
   }
-  /// Try to use the given region for an allocation with given size and 
+
+  /// Try to use the given region for an allocation with given size and
   ///alignment.
   ///
   /// Returns the allocation start address on success.
-  fn alloc_from_region(region: &Listnode, size: usize, align: usize)
-      -> Result<usize, ()>
-      {
-        let alloc_start = align_up(region.start_addr(), align);
-        let alloc_end = alloc_start.checked_add(size).ok_or(())?;
+  fn alloc_from_region(region: &Listnode, size: usize, align: usize) -> Result<usize, ()>
+  {
+    let alloc_start = align_up(region.start_addr(), align);
+    let alloc_end = alloc_start.checked_add(size).ok_or(())?;
 
-        if alloc_end > region.end_addr() {
-          //region to small
-          return Err(());
-        }
-        // why is there a hyphen         !!vvv -ShockEMP
+    if alloc_end > region.end_addr() {
+      //region to small
+      return Err(());
+    }
+    // why is there a hyphen         !!vvv -ShockEMP
 
-        let excess_size = region.end_addr() - alloc_end;
-        if excess_size > 0 && excess_size < mem::size_of::<ListNode>() {
-          // rest of region too small to hold a ListNode (required because the
-          // allocation splits the region in a used and a free part)
-          return Err(());
-        }
+    let excess_size = region.end_addr() - alloc_end;
+    if excess_size > 0 && excess_size < mem::size_of::<ListNode>() {
+      // rest of region too small to hold a ListNode (required because the
+      // allocation splits the region in a used and a free part)
+      return Err(());
+    }
 
-        // region suitable for allocation
-        Ok(alloc_start)
-      }
-  /// Adjust the given layout so that the resulting allocated memory 
+    // region suitable for allocation
+    Ok(alloc_start)
+  }
+
+  /// Adjust the given layout so that the resulting allocated memory
   /// region is also capable of storing a 'ListNode'.
   ///
   /// Returns the adjusted size and alignment as a (size, align) tuple.
-  fn size_align(layout: Layout) -> (usize, usize) {
+  fn size_align(layout: Layout) -> (usize, usize)
+  {
     let layout = layout
-        .align_to(mem::align_of::<ListNode>())
-        .expect("adjusting alignment failed")
-        .pad_to_align();
+      .align_to(mem::align_of::<ListNode>())
+      .expect("adjusting alignment failed")
+      .pad_to_align();
     let size = layout.size().max(mem::size_of::<ListNode>());
     (size, layout.align())
   }
 }
 
-unsafe impl GlobalAlloc for Locked<LinkedListAllocator> {
-  unsafe fn alloc(&self, layout: Layout) -> *mut u8 {
+unsafe impl GlobalAlloc for Locked<LinkedListAllocator>
+{
+  unsafe fn alloc(&self, layout: Layout) -> *mut u8
+  {
     //perform layout adjustments
     let (size, align) = LinkedListAllocator::size_align(layout);
     let mut allocator = self.lock();
@@ -138,10 +151,11 @@ unsafe impl GlobalAlloc for Locked<LinkedListAllocator> {
       alloc_start as *mut u8
     } else {
       ptr::null_mut()
-    }    
+    }
   }
 
-  unsafe fn dealloc(&self, ptr: *mut u8, layout: Layout) {
+  unsafe fn dealloc(&self, ptr: *mut u8, layout: Layout)
+  {
     // perform layout adjustments
     let (size, _) = LinkedListAllocator::size_align(layout);
 
