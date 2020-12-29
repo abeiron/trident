@@ -11,14 +11,10 @@
   <component name="ChangeListManager">
     <list default="true" id="8963b8e4-36c4-462a-8a85-47b0397d3ba3" name="Default Changelist" comment="">
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Cargo.lock" beforeDir="false" afterPath="$PROJECT_DIR$/Cargo.lock" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/alloc/alloc/allocator.rs" beforeDir="false" afterPath="$PROJECT_DIR$/alloc/alloc/allocator.rs" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/alloc/alloc/allocator/layout.rs" beforeDir="false" afterPath="$PROJECT_DIR$/alloc/alloc/allocator/layout.rs" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/alloc/alloc/allocator/linked_list.rs" beforeDir="false" afterPath="$PROJECT_DIR$/alloc/alloc/allocator/linked_list.rs" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/alloc/lib.rs" beforeDir="false" afterPath="$PROJECT_DIR$/alloc/lib.rs" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/kernel/Cargo.toml" beforeDir="false" afterPath="$PROJECT_DIR$/kernel/Cargo.toml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/kernel/lib.rs" beforeDir="false" afterPath="$PROJECT_DIR$/kernel/lib.rs" afterDir="false" />
     </list>
+    <list id="13be3aa5-139a-4fa1-a104-ca227263f246" name="Changes by shala" comment="" />
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
     <option name="HIGHLIGHT_NON_ACTIVE_CHANGELIST" value="false" />
@@ -54,7 +50,7 @@
     <property name="node.js.selected.package.tslint" value="(autodetect)" />
     <property name="org.rust.cargo.project.model.PROJECT_DISCOVERY" value="true" />
     <property name="org.rust.hideNoCargoProjectNotifications/home/mnimi/Projects/trident/init/main.rs" value="true" />
-    <property name="settings.editor.selected.configurable" value="preferences.lookFeel" />
+    <property name="settings.editor.selected.configurable" value="preferences.pluginManager" />
   </component>
   <component name="RustProjectSettings">
     <option name="toolchainHomeDirectory" value="$USER_HOME$/.cargo/bin" />
@@ -71,7 +67,8 @@
       <workItem from="1608029302207" duration="45000" />
       <workItem from="1608029359765" duration="584000" />
       <workItem from="1609069028195" duration="2168000" />
-      <workItem from="1609146635263" duration="443000" />
+      <workItem from="1609146635263" duration="1524000" />
+      <workItem from="1609149587824" duration="1601000" />
     </task>
     <servers />
   </component>

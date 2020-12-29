@@ -3,7 +3,7 @@
 pub use self::layout::Layout;
 use core::ffi::c_void;
 use core::mem::size_of;
-use core::ptr::{read_unaligned, write_unaligned};
+use core::ptr::{NonNull, read_unaligned, write_unaligned};
 
 pub mod global;
 pub mod heap;
@@ -13,10 +13,10 @@ pub mod slab;
 
 pub unsafe trait GlobalAlloc
 {
-  unsafe fn alloc(&self, layout: Layout) -> Option<*mut c_void>;
+  unsafe fn alloc(&self, layout: Layout) -> Option<NonNull<c_void>>;
   unsafe fn dealloc(&self, ptr: *mut c_void);
 
-  unsafe fn alloc_aligned(&self, layout: Layout) -> Option<*mut c_void>
+  unsafe fn alloc_aligned(&self, layout: Layout) -> Option<NonNull<c_void>>
   {
     let actual_size = layout.size + layout.align - 1 + size_of::<usize>();
 
@@ -33,7 +33,7 @@ pub unsafe trait GlobalAlloc
 
 
 
-    Some(aligned_ptr as *mut c_void)
+    Some(NonNull::new(aligned_ptr as *mut c_void).unwrap())
   }
 
   unsafe fn dealloc_aligned(&self, ptr: *mut c_void)
