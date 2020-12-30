@@ -1,15 +1,11 @@
 #![deny(clippy::all)]
-#![feature(lang_items)]
-#![feature(const_mut_refs)]
-#![cfg_attr(not(test), no_std)]
+#![feature(allocator)]
+#![feature(allocator_api)]
 #![feature(alloc_error_handler)]
-
+#![feature(const_fn)]
+#![feature(const_mut_refs)]
+#![feature(lang_items)]
+#![cfg_attr(not(test), no_std)]
 
 pub mod alloc;
-pub mod allocator;
-
-extern crate alloc;
-#[alloc_error_handler]
-fn alloc_error_handler(layout: alloc::alloc::layout) -> ! {
-	panic!("allocation error: {:?}", layout)
-}
+pub mod math;

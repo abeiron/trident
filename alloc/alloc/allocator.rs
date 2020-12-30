@@ -1,5 +1,6 @@
 //! `Allocator` type implementation.
 
+pub use self::heap::{init_heap, HEAP};
 pub use self::layout::Layout;
 
 use self::linked_list::LinkedListAllocator;
@@ -35,7 +36,7 @@ impl<A> Locked<A>
 
   pub fn lock(&self) -> spin::MutexGuard<A>
   {
-    sefl.inner.lock()
+    self.inner.lock()
   }
 }
 
@@ -55,6 +56,12 @@ pub unsafe trait GlobalAlloc
 {
   unsafe fn alloc(&self, layout: Layout) -> Option<NonNull<c_void>>;
   unsafe fn dealloc(&self, ptr: *mut c_void);
+  unsafe fn realloc(
+    &self,
+    ptr: *mut c_void,
+    old_size: usize,
+    layout: Layout,
+  ) -> Option<NonNull<c_void>>;
 
   unsafe fn alloc_aligned(&self, layout: Layout) -> Option<NonNull<c_void>>
   {
