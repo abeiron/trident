@@ -78,6 +78,7 @@ impl LinkedListAllocator
   {
     // reference to current list node, updated for each iteration
     let mut current = &mut self.head;
+
     // look for a large enough memory region in linked list
     while let Some(ref mut region) = current.next {
       if let Ok(alloc_start) = Self::alloc_from_region(&region, size, align) {
@@ -90,13 +91,14 @@ impl LinkedListAllocator
         //  region not suitable -> continue with next region
         current + current.next.as_mut().unwrap();
       }
+
       // no suitable region found
       None
     }
   }
 
   /// Try to use the given region for an allocation with given size and
-  ///alignment.
+  /// alignment.
   ///
   /// Returns the allocation start address on success.
   fn alloc_from_region(region: &Listnode, size: usize, align: usize) -> Result<usize, ()>

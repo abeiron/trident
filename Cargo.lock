@@ -80,6 +80,14 @@ dependencies = [
 ]
 
 [[package]]
+name = "trident-sys"
+version = "0.1.0"
+dependencies = [
+ "t_alloc",
+ "t_console",
+]
+
+[[package]]
 name = "volatile"
 version = "0.2.7"
 source = "registry+https://github.com/rust-lang/crates.io-index"
