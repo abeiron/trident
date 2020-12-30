@@ -3,6 +3,7 @@ members = [
 	"alloc",
 	"console",
 	"kernel",
+	"system",
 ]
 exclude = [
   "boot"
