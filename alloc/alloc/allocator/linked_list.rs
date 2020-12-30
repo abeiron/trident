@@ -1,3 +1,5 @@
+/*A basic linked list allocator.*/
+
 use super::align_up;
 use super::GlobalAlloc;
 use super::Layout;
@@ -138,6 +140,7 @@ impl LinkedListAllocator
   }
 }
 
+/*
 unsafe impl GlobalAlloc for Locked<LinkedListAllocator>
 {
   unsafe fn alloc(&self, layout: Layout) -> *mut u8
@@ -166,3 +169,4 @@ unsafe impl GlobalAlloc for Locked<LinkedListAllocator>
     self.lock().add_free_region(ptr as usize, size)
   }
 }
+*/
