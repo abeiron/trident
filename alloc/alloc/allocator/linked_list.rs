@@ -1,4 +1,6 @@
 use super::align_up;
+use super::GlobalAlloc;
+use super::Layout;
 use super::Locked;
 use core::mem;
 use core::ptr;
