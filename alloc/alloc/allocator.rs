@@ -9,6 +9,7 @@ use core::ffi::c_void;
 use core::mem::size_of;
 use core::ptr::{read_unaligned, write_unaligned, NonNull};
 use linked_list_allocator::LockedHeap;
+use spin::{Mutex, MutexGuard};
 
 pub mod global;
 pub mod heap;
@@ -22,7 +23,7 @@ pub const HEAP_SIZE: usize = 100 * 1024; // 100 KiB
 /// A wrapper around spin::Mutex to permit trait implementations.
 pub struct Locked<A>
 {
-  inner: spin::Mutex<A>,
+  inner: Mutex<A>,
 }
 
 impl<A> Locked<A>
@@ -30,11 +31,11 @@ impl<A> Locked<A>
   pub const fn new(inner: A) -> Self
   {
     Locked {
-      inner: spin::Mutex::new(inner),
+      inner: Mutex::new(inner),
     }
   }
 
-  pub fn lock(&self) -> spin::MutexGuard<A>
+  pub fn lock(&self) -> MutexGuard<A>
   {
     self.inner.lock()
   }
