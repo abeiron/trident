@@ -1,8 +1,9 @@
 /*TODO: Implement a global allocator.*/
 
 use super::{GlobalAlloc, Layout, HEAP};
+use core::cmp::{min, max};
 use core::ffi::c_void;
-use core::ptr::{read_unaligned, write_unaligned, NonNull};
+use core::ptr::{self, read_unaligned, write_unaligned, NonNull};
 
 #[no_mangle]
 pub extern "C" fn __rust_allocate(size: usize, align: usize) -> *mut u8
@@ -71,7 +72,6 @@ pub extern "C" fn __rust_usable_size(size: usize, _align: usize) -> usize
   size
 }
 
-#[global_allocator]
 pub struct Global;
 
 unsafe impl GlobalAlloc for Global

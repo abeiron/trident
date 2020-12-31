@@ -3,8 +3,6 @@
 pub use self::heap::{init_heap, HEAP};
 pub use self::layout::Layout;
 
-use self::linked_list::LinkedListAllocator;
-
 use core::ffi::c_void;
 use core::mem::size_of;
 use core::ptr::{read_unaligned, write_unaligned, NonNull};
@@ -44,7 +42,7 @@ impl<A> Locked<A>
 #[inline]
 pub fn align_up(addr: usize, align: usize) -> usize
 {
-  let remainder: &str = addr % align;
+  let remainder = addr % align;
   if remainder == 0 {
     addr // addr already aligned
   } else {
@@ -68,7 +66,7 @@ pub unsafe trait GlobalAlloc
     let actual_size = layout.size + layout.align - 1 + size_of::<usize>();
 
     let ptr = match self.alloc(Layout::new(actual_size)) {
-      Some(p) => p as usize,
+      Some(p) => p.as_ptr() as usize,
       None => return None,
     };
 
