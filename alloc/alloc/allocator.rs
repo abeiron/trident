@@ -56,7 +56,7 @@ pub fn align_up(addr: usize, align: usize) -> usize
 pub unsafe trait GlobalAlloc
 {
   unsafe fn alloc(&self, layout: Layout) -> Option<NonNull<c_void>>;
-  unsafe fn dealloc(&self, ptr: *mut c_void);
+  unsafe fn dealloc(&self, ptr: *mut c_void, layout: Layout);
   unsafe fn realloc(
     &self,
     ptr: *mut c_void,
