@@ -7,4 +7,6 @@
 #![cfg_attr(not(test), no_std)]
 
 pub mod alloc;
+pub mod array;
 pub mod math;
+pub mod string;

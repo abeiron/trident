@@ -13,3 +13,4 @@ t_console = { path = "../console", version = "*" }
 [lib]
 name = "t_sys"
 path = "lib.rs"
+crate-type = ["staticlib"]

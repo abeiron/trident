@@ -1,6 +1,6 @@
 /*TODO: Implement a global allocator.*/
 
-use super::{GlobalAlloc, Layout, HEAP};
+use super::{Allocator, Layout, HEAP};
 use core::cmp::{min, max};
 use core::ffi::c_void;
 use core::ptr::{self, read_unaligned, write_unaligned, NonNull};
@@ -74,7 +74,7 @@ pub extern "C" fn __rust_usable_size(size: usize, _align: usize) -> usize
 
 pub struct Global;
 
-unsafe impl GlobalAlloc for Global
+unsafe impl Allocator for Global
 {
   unsafe fn alloc(&self, layout: Layout) -> Option<NonNull<c_void>>
   {
