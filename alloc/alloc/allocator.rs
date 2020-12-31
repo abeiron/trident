@@ -14,7 +14,6 @@ use spin::{Mutex, MutexGuard};
 pub mod global;
 pub mod heap;
 pub mod layout;
-pub mod linked_list;
 pub mod slab;
 
 pub const HEAP_START: usize = 0x_4444_4444_0000;
@@ -45,7 +44,7 @@ impl<A> Locked<A>
 #[inline]
 pub fn align_up(addr: usize, align: usize) -> usize
 {
-  let remainder = addr % align;
+  let remainder: &str = addr % align;
   if remainder == 0 {
     addr // addr already aligned
   } else {
@@ -81,12 +80,12 @@ pub unsafe trait GlobalAlloc
     Some(NonNull::new(aligned_ptr as *mut c_void).unwrap())
   }
 
-  unsafe fn dealloc_aligned(&self, ptr: *mut c_void)
+  unsafe fn dealloc_aligned(&self, ptr: *mut c_void, layout: Layout)
   {
     let aligned_ptr = ptr as usize;
     let actual_ptr_ptr = aligned_ptr - size_of::<usize>();
     let actual_ptr = read_unaligned(actual_ptr_ptr as *const usize);
 
-    self.dealloc(actual_ptr as *mut c_void);
+    self.dealloc(actual_ptr as *mut c_void, layout);
   }
 }

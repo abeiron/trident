@@ -1,5 +1,4 @@
 #![deny(clippy::all)]
-#![feature(allocator)]
 #![feature(allocator_api)]
 #![feature(alloc_error_handler)]
 #![feature(const_fn)]

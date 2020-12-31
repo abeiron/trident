@@ -76,17 +76,17 @@ pub struct Global;
 
 unsafe impl GlobalAlloc for Global
 {
-  fn alloc(&self, layout: Layout) -> Option<NonNull<c_void>>
+  unsafe fn alloc(&self, layout: Layout) -> Option<NonNull<c_void>>
   {
     Some(NonNull::new(__rust_allocate(layout.size, layout.align) as *mut c_void).unwrap())
   }
 
-  fn dealloc(&self, ptr: *mut c_void, layout: Layout)
+  unsafe fn dealloc(&self, ptr: *mut c_void, layout: Layout)
   {
     __rust_deallocate(ptr as *mut u8, layout.size, layout.align)
   }
 
-  fn realloc(&self, ptr: *mut c_void, old_size: usize, layout: Layout) -> Option<NonNull<c_void>>
+  unsafe fn realloc(&self, ptr: *mut c_void, old_size: usize, layout: Layout) -> Option<NonNull<c_void>>
   {
     Some(
       NonNull::new(__rust_reallocate(ptr as *mut u8, old_size, layout.size, layout.align) as *mut c_void)
