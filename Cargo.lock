@@ -78,11 +78,8 @@ name = "t_xkernel"
 version = "0.1.0"
 dependencies = [
  "lazy_static",
- "linked_list_allocator",
- "spin 0.7.0",
  "t_alloc",
  "t_console",
- "volatile",
 ]
 
 [[package]]
