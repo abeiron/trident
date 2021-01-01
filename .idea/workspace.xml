@@ -10,18 +10,9 @@
   </component>
   <component name="ChangeListManager">
     <list default="true" id="8963b8e4-36c4-462a-8a85-47b0397d3ba3" name="Default Changelist" comment="">
-      <change afterPath="$PROJECT_DIR$/alloc/array.rs" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/alloc/array/raw_array.rs" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/alloc/string.rs" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/kernel/io.rs" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/kernel/io/mmio.rs" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/alloc/alloc.rs" beforeDir="false" afterPath="$PROJECT_DIR$/alloc/alloc.rs" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/alloc/alloc/allocator.rs" beforeDir="false" afterPath="$PROJECT_DIR$/alloc/alloc/allocator.rs" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/alloc/alloc/allocator/global.rs" beforeDir="false" afterPath="$PROJECT_DIR$/alloc/alloc/allocator/global.rs" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/alloc/lib.rs" beforeDir="false" afterPath="$PROJECT_DIR$/alloc/lib.rs" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/kernel/lib.rs" beforeDir="false" afterPath="$PROJECT_DIR$/kernel/lib.rs" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/system/Cargo.toml" beforeDir="false" afterPath="$PROJECT_DIR$/system/Cargo.toml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/alloc/array.rs" beforeDir="false" afterPath="$PROJECT_DIR$/alloc/array.rs" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/alloc/array/small_array.rs" beforeDir="false" afterPath="$PROJECT_DIR$/alloc/array/small_array.rs" afterDir="false" />
     </list>
     <list id="57be5248-d84d-4060-966b-5748ce6e2730" name="Changes by canad" comment="" />
     <list id="13be3aa5-139a-4fa1-a104-ca227263f246" name="Changes by shala" comment="" />
@@ -95,7 +86,7 @@
       <workItem from="1609146635263" duration="1524000" />
       <workItem from="1609149587824" duration="1601000" />
       <workItem from="1609264352105" duration="43000" />
-      <workItem from="1609447209779" duration="7903000" />
+      <workItem from="1609447209779" duration="10561000" />
     </task>
     <servers />
   </component>

@@ -12,6 +12,7 @@ mod raw_array;
 use self::raw_array::RawArray;
 
 mod small_array;
+pub use self::small_array::SmallArray;
 
 use crate::alloc::{Allocator, Global, Layout};
 
@@ -198,8 +199,8 @@ impl<T, A: Allocator> DerefMut for Array<T, A>
 impl<T, A: Allocator> Extend<T> for Array<T, A>
 {
   fn extend<I>(&mut self, iter: I)
-  where
-    I: IntoIterator<Item = T>
+    where
+        I: IntoIterator<Item=T>
   {
     for e in iter {
       self.push(e);
@@ -208,18 +209,360 @@ impl<T, A: Allocator> Extend<T> for Array<T, A>
 }
 
 impl<'a, T: 'a, A: Allocator> Extend<&'a T> for Array<T, A>
-where
-    T: Clone,
+  where
+      T: Clone,
 {
-    fn extend<I>(&mut self, iter: I)
+  fn extend<I>(&mut self, iter: I)
     where
-        I: IntoIterator<Item = &'a T>,
+        I: IntoIterator<Item=&'a T>,
+  {
+    for e in iter
     {
-        for e in iter
-        {
-            self.push(e.clone());
-        }
+      self.push(e.clone());
     }
+  }
 }
 
+impl<T, A: Allocator> FromIterator<T> for Array<T, A>
+  where
+      A: Default,
+{
+  fn from_iter<I>(iter: I) -> Self
+    where
+        I: IntoIterator<Item=T>,
+  {
+    let mut array = Array::new_with(A::default());
+    array.extend(iter);
+    return array;
+  }
+}
 
+pub struct IntoIter<T, A: Allocator>
+{
+  inner: Array<T, A>,
+  current: usize,
+  size: usize,
+}
+
+impl<T, A: Allocator> Iterator for IntoIter<T, A>
+{
+  type Item = T;
+
+  fn next(&mut self) -> Option<T>
+  {
+    if self.current >= self.size
+    {
+      None
+    } else {
+      unsafe {
+        let index = self.current;
+        self.current += 1;
+        Some(read(self.inner.buf.ptr.offset(index as isize)))
+      }
+    }
+  }
+
+  fn size_hint(&self) -> (usize, Option<usize>)
+  {
+    let remaining = self.size - self.current;
+    (remaining, Some(remaining))
+  }
+}
+
+impl<T, A: Allocator> Drop for IntoIter<T, A>
+{
+  fn drop(&mut self)
+  {
+    // Drop the remaining elements if we didn't iter
+    // until the end.
+    if needs_drop::<T>()
+    {
+      unsafe {
+        for i in self.current..self.size
+        {
+          drop_in_place(self.inner.buf.ptr.offset(i as isize))
+        }
+      }
+    }
+
+    // Set size of the array to 0 so it doesn't drop anything else.
+    self.inner.size = 0;
+  }
+}
+
+#[cfg(test)]
+mod tests
+{
+  use super::*;
+  use core::cell::Cell;
+
+  struct DropCheck<'a>
+  {
+    pub dropped: &'a Cell<i32>,
+  }
+
+  impl<'a> DropCheck<'a>
+  {
+    fn new(b: &'a Cell<i32>) -> Self
+    {
+      Self { dropped: b }
+    }
+  }
+
+  impl<'a> Drop for DropCheck<'a>
+  {
+    fn drop(&mut self)
+    {
+      self.dropped.set(self.dropped.get() + 1);
+    }
+  }
+
+  #[test]
+  fn push_pop()
+  {
+    let mut a = Array::new();
+
+    a.push(1);
+    a.push(2);
+    a.push(3);
+    a.push(4);
+    a.push(5);
+
+    assert!(a.len() == 5);
+    assert!(a.pop() == Some(5));
+    assert!(a.pop() == Some(4));
+    assert!(a.pop() == Some(3));
+    assert!(a.len() == 2);
+
+    a.push(3);
+    a.push(4);
+    a.push(5);
+
+    assert!(a.len() == 5);
+    assert!(a.pop() == Some(5));
+    assert!(a.pop() == Some(4));
+    assert!(a.pop() == Some(3));
+    assert!(a.pop() == Some(2));
+    assert!(a.pop() == Some(1));
+    assert!(a.pop() == None);
+    assert!(a.pop() == None);
+    assert!(a.pop() == None);
+    assert!(a.pop() == None);
+    assert!(a.len() == 0);
+  }
+
+  #[test]
+  fn drop()
+  {
+    let dropped = Cell::new(0);
+
+    {
+      let mut a = Array::new();
+      a.push(DropCheck::new(&dropped));
+    }
+
+    assert!(dropped.get() == 1);
+  }
+
+  fn sum_slice(slice: &[i32]) -> i32
+  {
+    slice.iter().sum()
+  }
+
+  fn double_slice(slice: &mut [i32])
+  {
+    slice.iter_mut().for_each(|x| *x = *x * 2);
+  }
+
+  #[test]
+  fn slice()
+  {
+    let mut a = Array::new();
+
+    a.push(1);
+    a.push(2);
+    a.push(3);
+    a.push(4);
+    a.push(5);
+
+    assert!(sum_slice(&a) == 15);
+    double_slice(&mut a);
+
+    assert!(a[0] == 2);
+    assert!(a[1] == 4);
+    assert!(a[2] == 6);
+    assert!(a[3] == 8);
+    assert!(a[4] == 10);
+  }
+
+  #[test]
+  fn subslice()
+  {
+    let mut a = Array::new();
+
+    a.push(1);
+    a.push(2);
+    a.push(3);
+    a.push(4);
+    a.push(5);
+
+    assert!(sum_slice(&a[1..3]) == 5);
+    assert!(sum_slice(&a[1..=3]) == 9);
+
+    double_slice(&mut a[1..3]);
+
+    assert!(a[0] == 1);
+    assert!(a[1] == 4);
+    assert!(a[2] == 6);
+    assert!(a[3] == 4);
+    assert!(a[4] == 5);
+
+    double_slice(&mut a[1..=3]);
+
+    assert!(a[0] == 1);
+    assert!(a[1] == 8);
+    assert!(a[2] == 12);
+    assert!(a[3] == 8);
+    assert!(a[4] == 5);
+  }
+
+  #[test]
+  fn iter()
+  {
+    let mut a = Array::new();
+
+    a.push(1);
+    a.push(2);
+    a.push(3);
+    a.push(4);
+    a.push(5);
+
+    for (i, value) in a.iter().enumerate()
+    {
+      assert!(i as i32 == value - 1);
+    }
+
+    for (i, value) in a.iter_mut().enumerate()
+    {
+      assert!(i as i32 == *value - 1);
+    }
+  }
+
+  #[test]
+  fn resize()
+  {
+    let mut a = Array::new();
+
+    a.push(1);
+    a.resize(3, 7);
+    a.push(2);
+    a.push(3);
+
+    assert!(a[0] == 1);
+    assert!(a[1] == 7);
+    assert!(a[2] == 7);
+    assert!(a[3] == 2);
+    assert!(a[4] == 3);
+  }
+
+  #[test]
+  fn extend()
+  {
+    let mut a = Array::new();
+
+    a.push(1);
+    a.extend([7, 8].iter());
+    a.extend(&[2, 3]);
+
+    assert!(a[0] == 1);
+    assert!(a[1] == 7);
+    assert!(a[2] == 8);
+    assert!(a[3] == 2);
+    assert!(a[4] == 3);
+  }
+
+  #[test]
+  fn zst()
+  {
+    let mut a = Array::new();
+
+    a.push(());
+    a.push(());
+    a.push(());
+    assert!(a.len() == 3);
+
+    assert!(a[1] == ());
+
+    a.clear();
+    assert!(a.len() == 0);
+  }
+
+  #[test]
+  fn into_iter_drain_all()
+  {
+    let dropped1 = Cell::new(0);
+    let dropped2 = Cell::new(0);
+    let dropped3 = Cell::new(0);
+
+    {
+      let mut a = Array::new();
+      a.push(DropCheck::new(&dropped1));
+      a.push(DropCheck::new(&dropped2));
+      a.push(DropCheck::new(&dropped3));
+
+      let mut i = a.into_iter();
+      assert!(i.next().is_some());
+      assert!(i.next().is_some());
+      assert!(i.next().is_some());
+      assert!(i.next().is_none());
+    }
+
+    assert!(dropped1.get() == 1);
+    assert!(dropped2.get() == 1);
+    assert!(dropped3.get() == 1);
+  }
+
+  #[test]
+  fn into_iter_drain_some()
+  {
+    let dropped1 = Cell::new(0);
+    let dropped2 = Cell::new(0);
+    let dropped3 = Cell::new(0);
+
+    {
+      let mut a = Array::new();
+      a.push(DropCheck::new(&dropped1));
+      a.push(DropCheck::new(&dropped2));
+      a.push(DropCheck::new(&dropped3));
+
+      let mut i = a.into_iter();
+      assert!(i.next().is_some());
+      assert!(i.next().is_some());
+    }
+
+    assert!(dropped1.get() == 1);
+    assert!(dropped2.get() == 1);
+    assert!(dropped3.get() == 1);
+  }
+
+  #[test]
+  fn into_iter_drain_none()
+  {
+    let dropped1 = Cell::new(0);
+    let dropped2 = Cell::new(0);
+    let dropped3 = Cell::new(0);
+
+    {
+      let mut a = Array::new();
+      a.push(DropCheck::new(&dropped1));
+      a.push(DropCheck::new(&dropped2));
+      a.push(DropCheck::new(&dropped3));
+
+      a.into_iter();
+    }
+
+    assert!(dropped1.get() == 1);
+    assert!(dropped2.get() == 1);
+    assert!(dropped3.get() == 1);
+  }
+}
