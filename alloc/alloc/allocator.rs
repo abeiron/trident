@@ -20,9 +20,9 @@ pub const HEAP_SIZE: usize = 100 * 1024; // 100 KiB
 
 pub unsafe fn alloc_array<T>(alloc: &mut dyn Allocator, size: usize) -> Option<NonNull<T>>
 {
-    alloc
-        .alloc_aligned(Layout::from_type_array::<T>(size))
-        .map(|ptr| ptr.cast::<T>())
+  alloc
+      .alloc_aligned(Layout::from_type_array::<T>(size))
+      .map(|ptr| ptr.cast::<T>())
 }
 
 /// A wrapper around spin::Mutex to permit trait implementations.

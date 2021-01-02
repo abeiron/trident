@@ -10,10 +10,18 @@
   </component>
   <component name="ChangeListManager">
     <list default="true" id="8963b8e4-36c4-462a-8a85-47b0397d3ba3" name="Default Changelist" comment="">
+      <change afterPath="$PROJECT_DIR$/alloc/collections.rs" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/alloc/collections/hash_map.rs" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/alloc/hash.rs" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/alloc/hash/adler.rs" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/alloc/hash/murmur.rs" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/alloc/hash/sip.rs" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Cargo.lock" beforeDir="false" afterPath="$PROJECT_DIR$/Cargo.lock" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/kernel/Cargo.toml" beforeDir="false" afterPath="$PROJECT_DIR$/kernel/Cargo.toml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/kernel/lib.rs" beforeDir="false" afterPath="$PROJECT_DIR$/kernel/lib.rs" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/alloc/alloc/allocator.rs" beforeDir="false" afterPath="$PROJECT_DIR$/alloc/alloc/allocator.rs" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/alloc/alloc/allocator/#linked_list.rs" beforeDir="false" afterPath="$PROJECT_DIR$/alloc/alloc/allocator/#linked_list.rs" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/alloc/alloc/allocator/heap.rs" beforeDir="false" afterPath="$PROJECT_DIR$/alloc/alloc/allocator/heap.rs" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/alloc/lib.rs" beforeDir="false" afterPath="$PROJECT_DIR$/alloc/lib.rs" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/alloc/string.rs" beforeDir="false" afterPath="$PROJECT_DIR$/alloc/string.rs" afterDir="false" />
     </list>
     <list id="57be5248-d84d-4060-966b-5748ce6e2730" name="Changes by canad" comment="" />
     <list id="13be3aa5-139a-4fa1-a104-ca227263f246" name="Changes by shala" comment="" />
@@ -51,7 +59,8 @@
     <property name="SHARE_PROJECT_CONFIGURATION_FILES" value="true" />
     <property name="WebServerToolWindowFactoryState" value="false" />
     <property name="cf.first.check.clang-format" value="false" />
-    <property name="last_opened_file_path" value="$PROJECT_DIR$/Cargo.toml" />
+    <property name="codeWithMe.voiceChat.enabledByDefault" value="false" />
+    <property name="last_opened_file_path" value="$PROJECT_DIR$" />
     <property name="node.js.detected.package.eslint" value="true" />
     <property name="node.js.detected.package.tslint" value="true" />
     <property name="node.js.path.for.package.eslint" value="project" />
@@ -60,12 +69,12 @@
     <property name="node.js.selected.package.tslint" value="(autodetect)" />
     <property name="org.rust.cargo.project.model.PROJECT_DISCOVERY" value="true" />
     <property name="org.rust.hideNoCargoProjectNotifications/home/mnimi/Projects/trident/init/main.rs" value="true" />
-    <property name="settings.editor.selected.configurable" value="preferences.pluginManager" />
+    <property name="settings.editor.selected.configurable" value="preferences.keymap" />
   </component>
   <component name="RunManager">
-    <configuration default="true" type="GradleAppRunConfiguration" factoryName="Application" REDIRECT_INPUT="false" ELEVATE="false" PASS_PARENT_ENVS_2="true">
+    <configuration default="true" type="CMakeRunConfiguration" factoryName="Application" REDIRECT_INPUT="false" ELEVATE="false" PASS_PARENT_ENVS_2="true">
       <method v="2">
-        <option name="com.jetbrains.cidr.cpp.gradle.execution.GradleNativeBuildBeforeRunTaskProvider$BuildBeforeRunTask" enabled="true" />
+        <option name="com.jetbrains.cidr.execution.CidrBuildBeforeRunTaskProvider$BuildBeforeRunTask" enabled="true" />
       </method>
     </configuration>
   </component>
@@ -88,6 +97,7 @@
       <workItem from="1609149587824" duration="1601000" />
       <workItem from="1609264352105" duration="43000" />
       <workItem from="1609447209779" duration="11627000" />
+      <workItem from="1609565279466" duration="12452000" />
     </task>
     <servers />
   </component>
