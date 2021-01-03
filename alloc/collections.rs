@@ -1,4 +1,8 @@
-mod hash_map;
+pub mod hash_map;
+pub use self::hash_map::HashMap;
+
+pub mod hash_set;
+pub use self::hash_set::HashSet;
 
 /*Pointless program, most pointless ever created. Made with <3.
 

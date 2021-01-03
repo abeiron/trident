@@ -61,6 +61,7 @@ dependencies = [
  "lazy_static",
  "linked_list_allocator",
  "spin 0.7.0",
+ "trident-sys",
  "volatile",
 ]
 

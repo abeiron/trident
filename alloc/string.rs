@@ -14,13 +14,27 @@ use core::ops::{DerefMut, Deref};
 use core::ptr::copy_nonoverlapping;
 use core::str;
 
+
+/// Represents a growable UTF-8 encoded string.
 pub struct String<A: Allocator = Global>
 {
   buf: Array<u8, A>,
 }
 
+
 impl<A: Allocator> String<A>
 {
+  /// Initialises an empty String with the specified allocator `A`
+  ///
+  /// ```no_run
+  /// use trident_sys::alloc::Global;
+  /// use trident_sys::string::String;
+  ///
+  /// fn main()
+  /// {
+  ///   let s = String::new_with(Global);
+  /// }
+  /// ```
   pub fn new_with(alloc: A) -> Self
   {
     Self {
@@ -28,6 +42,18 @@ impl<A: Allocator> String<A>
     }
   }
 
+  /// Initialises a `String` from a given `&str` using the specified allocator, `A`.
+  ///
+  ///
+  /// ```no_run
+  /// use trident_sys::alloc::Global;
+  /// use trident_sys::alloc::String;
+  ///
+  /// fn main()
+  /// {
+  ///   let s = String::from_str_with("hello!", Global);
+  /// }
+  /// ```
   pub fn from_str_with(s: &str, alloc: A) -> Self
   {
     let slice = s.as_bytes();
@@ -41,12 +67,14 @@ impl<A: Allocator> String<A>
     Self { buf }
   }
 
+  /// Dereferences to the base `&str`.
   #[inline]
   pub fn as_str(&self) -> &str
   {
     self
   }
 
+  /// Pushes a Unicode character point to the current instance of `String`.
   pub fn push(&mut self, c: char)
   {
     let mut bytes = [0u8; 4];
@@ -68,11 +96,33 @@ impl<A: Allocator> core::convert::TryFrom<Array<u8, A>> for String<A>
 
 impl String<Global>
 {
+  /// Initialises an empty `String`.
+  ///
+  ///
+  /// ```
+  /// use trident_sys::string::String;
+  ///
+  /// fn main()
+  /// {
+  ///   let s = String::new();
+  /// }
+  /// ```
   pub fn new() -> Self
   {
     Self::new_with(Global)
   }
 
+  /// Initialises a `String` from a given `&str`.
+  ///
+  ///
+  /// ```
+  /// use trident_sys::string::String;
+  ///
+  /// fn main()
+  /// {
+  ///   let s = String::from("hello!");
+  /// }
+  /// ```
   pub fn from(s: &str) -> Self
   {
     Self::from_string_with(s, Global)
@@ -81,6 +131,7 @@ impl String<Global>
 
 impl<A: Allocator> AsRef<str> for String<A>
 {
+  /// References the current `String` as a `&str`.
   #[inline]
   fn as_ref(&self) -> &str
   {
@@ -90,6 +141,7 @@ impl<A: Allocator> AsRef<str> for String<A>
 
 impl<A: Allocator> Borrow<str> for String<A>
 {
+  /// Borrows the current `String` as `&str`.
   #[inline]
   fn borrow(&self) -> &str
   {
@@ -101,6 +153,18 @@ impl<A: Allocator> Deref for String<A>
 {
   type Target = str;
 
+  /// Dereferences the current `String` into a `&str`.
+  ///
+  ///
+  /// ```
+  /// use trident_sys::string::String;
+  ///
+  /// fn main()
+  /// {
+  ///   let _s = String::from("hello!");
+  ///   let  s = s.deref();
+  /// }
+  /// ```
   #[inline]
   fn deref(&self) -> &Self::Target
   {
@@ -112,6 +176,7 @@ impl<A: Allocator> Deref for String<A>
 
 impl<A: Allocator> DerefMut for String<A>
 {
+  /// Dereferences the current `String` into a mutable `&str`.
   #[inline]
   fn deref_mut(&mut self) -> &mut str
   {
@@ -121,6 +186,7 @@ impl<A: Allocator> DerefMut for String<A>
 
 impl<A: Allocator> fmt::Display for String<A>
 {
+  // allows println!() to work
   fn fmt(&self, f: &mut fmt::Formatter) -> fmt::Result
   {
     fmt::Display::fmt(self.as_str(), f)
@@ -160,7 +226,7 @@ impl<A: Allocator> Hash for String<A>
 //------------------------------------------------------------
 //StringWide: A growable UTF-16 string.
 
-
+/// Represents a growable, UTF-16-encoded String.
 pub struct StringWide<A: Allocator = Global>
 {
   buf: Array<u16, A>,
@@ -168,6 +234,18 @@ pub struct StringWide<A: Allocator = Global>
 
 impl<A: Allocator> StringWide<A>
 {
+  /// Initialises an empty `StringWide` with the specified allocator, `A`.
+  ///
+  ///
+  /// ```no_run
+  /// use trident_sys::alloc::Global;
+  /// use trident_sys::string::StringWide;
+  ///
+  /// fn main()
+  /// {
+  ///   let s = StringWide::new();
+  /// }
+  /// ```
   pub fn new_with(alloc: A) -> Self
   {
     Self {
@@ -175,6 +253,18 @@ impl<A: Allocator> StringWide<A>
     }
   }
 
+  /// Initialises a `StringWide` from the given `&str` using the specified allocator, `A`.
+  ///
+  ///
+  /// ```no_run
+  /// use trident_sys::alloc::Global;
+  /// use trident_sys::string::StringWide;
+  ///
+  /// fn main()
+  /// {
+  ///   let s = StringWide::from_str_with("hello!", Global);
+  /// }
+  /// ```
   pub fn from_str_with(s: &str, alloc: A) -> Self
   {
     let w_iter = s.encode_utf16();
@@ -189,6 +279,7 @@ impl<A: Allocator> StringWide<A>
     Self { buf }
   }
 
+  /// See `String::push`.
   #[inline]
   pub fn push(&mut self, c: char)
   {
@@ -202,11 +293,33 @@ impl<A: Allocator> StringWide<A>
 
 impl StringWide<Global>
 {
+  /// Initialises an empty `StringWide`.
+  ///
+  ///
+  /// ```
+  /// use trident_sys::string::StringWide;
+  ///
+  /// fn main()
+  /// {
+  ///   let s = StringWide::new();
+  /// }
+  /// ```
   pub fn new() -> Self
   {
     Self::new_with(Global)
   }
 
+  /// Initialises a `StringWide` from the given `&str`.
+  ///
+  ///
+  /// ```
+  /// use trident_sys::string::StringWide;
+  ///
+  /// fn main()
+  /// {
+  ///   let s = StringWide::from("hello!");
+  /// }
+  /// ```
   pub fn from(s: &str) -> Self
   {
     Self::from_str_with(s, Global)
