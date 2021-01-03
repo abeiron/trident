@@ -9,12 +9,7 @@
     <cargoProject FILE="$PROJECT_DIR$/Cargo.toml" />
   </component>
   <component name="ChangeListManager">
-    <list default="true" id="8963b8e4-36c4-462a-8a85-47b0397d3ba3" name="Default Changelist" comment="">
-      <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Cargo.lock" beforeDir="false" afterPath="$PROJECT_DIR$/Cargo.lock" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/kernel/Cargo.toml" beforeDir="false" afterPath="$PROJECT_DIR$/kernel/Cargo.toml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/kernel/lib.rs" beforeDir="false" afterPath="$PROJECT_DIR$/kernel/lib.rs" afterDir="false" />
-    </list>
+    <list default="true" id="8963b8e4-36c4-462a-8a85-47b0397d3ba3" name="Default Changelist" comment="" />
     <list id="57be5248-d84d-4060-966b-5748ce6e2730" name="Changes by canad" comment="" />
     <list id="13be3aa5-139a-4fa1-a104-ca227263f246" name="Changes by shala" comment="" />
     <list id="22e78503-7bfb-49d5-8d00-febaeb22101e" name="Changes by shockemp" comment="" />
@@ -70,7 +65,7 @@
     </configuration>
   </component>
   <component name="RustProjectSettings">
-    <option name="toolchainHomeDirectory" value="$USER_HOME$/.cargo/bin" />
+    <option name="toolchainHomeDirectory" value="$PROJECT_DIR$/../.cargo/bin" />
     <option name="version" value="2" />
   </component>
   <component name="SpellCheckerSettings" RuntimeDictionaries="0" Folders="0" CustomDictionaries="0" DefaultDictionary="application-level" UseSingleDictionary="true" transferred="true" />
