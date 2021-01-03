@@ -10,25 +10,13 @@
   </component>
   <component name="ChangeListManager">
     <list default="true" id="8963b8e4-36c4-462a-8a85-47b0397d3ba3" name="Default Changelist" comment="">
-      <change afterPath="$PROJECT_DIR$/alloc/collections/hash_set.rs" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/system/string.rs" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Cargo.lock" beforeDir="false" afterPath="$PROJECT_DIR$/Cargo.lock" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/alloc/Cargo.toml" beforeDir="false" afterPath="$PROJECT_DIR$/alloc/Cargo.toml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/alloc/collections.rs" beforeDir="false" afterPath="$PROJECT_DIR$/alloc/collections.rs" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/alloc/collections/hash_map.rs" beforeDir="false" afterPath="$PROJECT_DIR$/alloc/collections/hash_map.rs" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/alloc/lib.rs" beforeDir="false" afterPath="$PROJECT_DIR$/alloc/lib.rs" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/alloc/string.rs" beforeDir="false" afterPath="$PROJECT_DIR$/alloc/string.rs" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/system/Cargo.toml" beforeDir="false" afterPath="$PROJECT_DIR$/system/Cargo.toml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/system/lib.rs" beforeDir="false" afterPath="$PROJECT_DIR$/system/lib.rs" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/kernel/lib.rs" beforeDir="false" afterPath="$PROJECT_DIR$/kernel/lib.rs" afterDir="false" />
     </list>
     <list id="57be5248-d84d-4060-966b-5748ce6e2730" name="Changes by canad" comment="" />
-    <list id="13be3aa5-139a-4fa1-a104-ca227263f246" name="Changes by shala" comment="">
-      <change beforePath="$PROJECT_DIR$/alloc/string.rs" beforeDir="false" afterPath="$PROJECT_DIR$/alloc/string.rs" afterDir="false" />
-    </list>
-    <list id="22e78503-7bfb-49d5-8d00-febaeb22101e" name="Changes by shockemp" comment="">
-      <change beforePath="$PROJECT_DIR$/alloc/string.rs" beforeDir="false" afterPath="$PROJECT_DIR$/alloc/string.rs" afterDir="false" />
-    </list>
+    <list id="13be3aa5-139a-4fa1-a104-ca227263f246" name="Changes by shala" comment="" />
+    <list id="22e78503-7bfb-49d5-8d00-febaeb22101e" name="Changes by shockemp" comment="" />
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
     <option name="HIGHLIGHT_NON_ACTIVE_CHANGELIST" value="false" />
@@ -134,7 +122,7 @@
       <workItem from="1609264352105" duration="43000" />
       <workItem from="1609447209779" duration="11627000" />
       <workItem from="1609565279466" duration="16676000" />
-      <workItem from="1609659815146" duration="7489000" />
+      <workItem from="1609659815146" duration="10823000" />
     </task>
     <servers />
   </component>

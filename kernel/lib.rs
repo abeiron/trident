@@ -21,7 +21,8 @@ mod test;
 #[no_mangle]
 pub extern "C" fn kmain() -> !
 {
-  loop {
+  loop
+  {
     console::println!("Hello, world!");
   }
 }

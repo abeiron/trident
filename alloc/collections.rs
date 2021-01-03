@@ -6,6 +6,19 @@ pub use self::hash_set::HashSet;
 
 /*Pointless program, most pointless ever created. Made with <3.
 
+// Require #![feature(const_generics)] and #![feature(const_evaluatable_checker)]
+pub enum Predicate<const EXPRESSION: bool> {}
+
+pub trait Satisfied {}
+impl Satisfied for Predicate<true> {}
+
+fn intake<const N: u8> ()
+where
+    Predicate<{N <= 15}>: Satisfied
+{
+//--snip--//
+}
+
 trait Character
 {
   fn dance();
@@ -44,6 +57,6 @@ fn setup(c: impl Character)
 
 fn main()
 {
-  setup(Bob { age: 0 });
+  setup(Bob { age: 420 });
 }
 */
