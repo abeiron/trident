@@ -11,6 +11,6 @@ t_alloc   = { path = "../alloc", version = "*"}
 t_console = { path = "../console", version = "*" }
 
 [lib]
-name = "t_sys"
+name = "trident_sys"
 path = "lib.rs"
 crate-type = ["staticlib"]

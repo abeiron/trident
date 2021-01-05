@@ -8,7 +8,7 @@
 //! too big (more than twice as big as the memory we want to allocate), we
 //! split the smallest free block in half recursively until it's the right
 //! size.  This simplifies a lot of bookkeeping, because all our block
-//! sizes are a power of 2, which makes it easy to have one free list per
+//! sizes are a power of 2, which makes it easy to have one free array per
 //! block size.
 
 use core::cmp::{max, min};
@@ -36,7 +36,7 @@ const MIN_HEAP_ALIGN: usize = 4096;
 
 /// A free block in our heap.  This is actually a header that we store at
 /// the start of the block.  We don't store any size information in the
-/// header, because we a separate free block list for each block size.
+/// header, because we a separate free block array for each block size.
 pub struct FreeBlock
 {
   /// The next available free block or "null" if it is the final block.
@@ -72,7 +72,7 @@ pub struct Heap<'a>
   /// The free lists for our heap.
   ///
   /// The block at `free_lists[0]` contains the smallest block that we can allocate,
-  /// and the list at the end can only contain a single free block the size of our entire heap,
+  /// and the array at the end can only contain a single free block the size of our entire heap,
   /// and only when no memory is allocated.
   free_lists: &'a mut [*mut FreeBlock],
 
@@ -101,7 +101,7 @@ impl<'a> Heap<'a>
     // The heap base must not be null.
     assert!(heap_base != ptr::null_mut());
 
-    // We must have at least one free list.
+    // We must have at least one free array.
     assert!(free_lists.len() > 0);
 
     // Calculate our minimum block size based on the number of free
@@ -122,13 +122,13 @@ impl<'a> Heap<'a>
     // http://graphics.stanford.edu/~seander/bithacks.html#DetermineIfPowerOf2
     assert!(heap_size.is_power_of_2());
 
-    // We must have one free list per possible heap block size.
+    // We must have one free array per possible heap block size.
     assert_eq!(
       min_block_size * (2u32.pow(free_lists.len() as u32 - 1)) as usize,
       heap_size
     );
 
-    // Zero out our free list pointers.
+    // Zero out our free array pointers.
     for ptr in free_lists.iter_mut() {
       *ptr = ptr::null_mut();
     }
@@ -142,7 +142,7 @@ impl<'a> Heap<'a>
       min_block_size_log2: min_block_size.log2(),
     };
 
-    // Insert the entire heap onto the appropriate free list as a
+    // Insert the entire heap onto the appropriate free array as a
     // single block.
     let order = result
       .allocation_order(heap_size, 1)
@@ -207,7 +207,7 @@ impl<'a> Heap<'a>
     1 << (self.min_block_size_log2 as usize + order)
   }
 
-  /// Pop a block off the appropriate free list.
+  /// Pop a block off the appropriate free array.
   unsafe fn free_list_pop(&mut self, order: usize) -> Option<*mut u8>
   {
     let candidate = self.free_lists[order];
@@ -219,7 +219,7 @@ impl<'a> Heap<'a>
     }
   }
 
-  /// Insert `block` of order `order` onto the appropriate free list.
+  /// Insert `block` of order `order` onto the appropriate free array.
   unsafe fn free_list_insert(&mut self, order: usize, block: *mut u8)
   {
     let free_block_ptr = block as *mut FreeBlock;
@@ -227,8 +227,8 @@ impl<'a> Heap<'a>
     self.free_lists[order] = free_block_ptr;
   }
 
-  /// Attempt to remove a block from our free list, returning true
-  /// success, and false if the block wasn't on our free list.  This is
+  /// Attempt to remove a block from our free array, returning true
+  /// success, and false if the block wasn't on our free array.  This is
   /// the slowest part of a primitive buddy allocator, because it runs in
   /// O(log N) time where N is the number of blocks of a given size.
   ///
@@ -240,7 +240,7 @@ impl<'a> Heap<'a>
   {
     let block_ptr = block as *mut FreeBlock;
 
-    // Yuck, list traversals are gross without recursion.  Here,
+    // Yuck, array traversals are gross without recursion.  Here,
     // `*checking` is the pointer we want to check, and `checking` is
     // the memory location we found it at, which we'll need if we want
     // to replace the value `*checking` with a new value.
@@ -248,7 +248,7 @@ impl<'a> Heap<'a>
 
     // Loop until we run out of free blocks.
     while *checking != ptr::null_mut() {
-      // Is this the pointer we want to remove from the free list?
+      // Is this the pointer we want to remove from the free array?
       if *checking == block_ptr {
         // Yup, this is the one, so overwrite the value we used to
         // get here with the next one in the sequence.
@@ -265,7 +265,7 @@ impl<'a> Heap<'a>
   }
 
   /// Split a `block` of order `order` down into a block of order
-  /// `order_needed`, placing any unused chunks on the free list.
+  /// `order_needed`, placing any unused chunks on the free array.
   unsafe fn split_free_block(&mut self, block: *mut u8, mut order: usize, order_needed: usize)
   {
     // Get the size of our starting block.
@@ -277,7 +277,7 @@ impl<'a> Heap<'a>
       size_to_split >>= 1;
       order -= 1;
 
-      // Insert the "upper half" of the block into the free list.
+      // Insert the "upper half" of the block into the free array.
       let split = block.offset(size_to_split as isize);
       self.free_list_insert(order, split);
     }
@@ -347,7 +347,7 @@ impl<'a> Heap<'a>
       .expect("Tried to dispose of invalid block");
 
     // The fun part: When deallocating a block, we also want to check
-    // to see if its "buddy" is on the free list.  If the buddy block
+    // to see if its "buddy" is on the free array.  If the buddy block
     // is also free, we merge them and continue walking up.
     //
     // `block` is the biggest merged block we have so far.
