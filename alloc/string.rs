@@ -395,8 +395,8 @@ mod tests
 
     map.insert(String::from("Hello"), 42);
 
-    assert!(map.find("Hello") == Some(&42));
-    assert!(map.find("world") == None);
+    assert_eq!(map.find("Hello"), Some(&42));
+    assert_eq!(map.find("world"), None);
   }
 
   #[test]
