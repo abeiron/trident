@@ -12,6 +12,7 @@
 //! block size.
 
 use core::cmp::{max, min};
+use core::ffi::c_void;
 use core::mem::size_of;
 use core::ptr;
 use spin::Mutex;
@@ -290,7 +291,7 @@ impl<'a> Heap<'a>
   ///
   /// All allocated memory must be passed to `deallocate` with the same
   /// `size` and `align` parameter, or else horrible things will happen.
-  pub unsafe fn allocate(&mut self, size: usize, align: usize) -> *mut u8
+  pub unsafe fn allocate(&mut self, size: usize, align: usize) -> *mut c_void
   {
     // Figure out which order block we need.
     if let Some(order_needed) = self.allocation_order(size, align) {
@@ -340,7 +341,7 @@ impl<'a> Heap<'a>
   /// Deallocate a block allocated using `allocate`.  Note that the
   /// `old_size` and `align` values must match the values passed to
   /// `allocate`, or our heap will be corrupted.
-  pub unsafe fn deallocate(&mut self, ptr: *mut u8, old_size: usize, align: usize)
+  pub unsafe fn deallocate(&mut self, ptr: *mut c_void, old_size: usize, align: usize)
   {
     let initial_order = self
       .allocation_order(old_size, align)

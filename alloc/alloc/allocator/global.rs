@@ -6,7 +6,7 @@ use core::ffi::c_void;
 use core::ptr::{self, NonNull};
 
 #[no_mangle]
-pub extern "C" fn __rust_allocate(size: usize, align: usize) -> *mut u8
+pub extern "C" fn __rust_allocate(size: usize, align: usize) -> *mut c_void
 {
   unsafe {
     HEAP
@@ -17,7 +17,7 @@ pub extern "C" fn __rust_allocate(size: usize, align: usize) -> *mut u8
   }
 }
 
-pub extern "C" fn __rust_deallocate(ptr: *mut u8, old_size: usize, align: usize)
+pub extern "C" fn __rust_deallocate(ptr: *mut c_void, old_size: usize, align: usize)
 {
   unsafe {
     HEAP
@@ -33,11 +33,11 @@ pub extern "C" fn __rust_deallocate(ptr: *mut u8, old_size: usize, align: usize)
 /// and deallocate the old memory.
 #[no_mangle]
 pub extern "C" fn __rust_reallocate(
-  ptr: *mut u8,
+  ptr: *mut c_void,
   old_size: usize,
   size: usize,
   align: usize,
-) -> *mut u8
+) -> *mut c_void
 {
   let new_ptr = __rust_allocate(size, align);
   if new_ptr.is_null() {
@@ -54,7 +54,7 @@ pub extern "C" fn __rust_reallocate(
 /// We do not support in-place reallocation, so just return `old_size`.
 #[no_mangle]
 pub extern "C" fn __rust_reallocate_inplace(
-  _ptr: *mut u8,
+  _ptr: *mut c_void,
   old_size: usize,
   _size: usize,
   _align: usize,
@@ -78,19 +78,16 @@ unsafe impl Allocator for Global
 {
   unsafe fn alloc(&self, layout: Layout) -> Option<NonNull<c_void>>
   {
-    Some(NonNull::new(__rust_allocate(layout.size, layout.align) as *mut c_void).unwrap())
+    Some(NonNull::new(__rust_allocate(layout.size, layout.align)).unwrap())
   }
 
   unsafe fn dealloc(&self, ptr: *mut c_void, layout: Layout)
   {
-    __rust_deallocate(ptr as *mut u8, layout.size, layout.align)
+    __rust_deallocate(ptr, layout.size, layout.align)
   }
 
   unsafe fn realloc(&self, ptr: *mut c_void, old_size: usize, layout: Layout) -> Option<NonNull<c_void>>
   {
-    Some(
-      NonNull::new(__rust_reallocate(ptr as *mut u8, old_size, layout.size, layout.align) as *mut c_void)
-        .unwrap(),
-    )
+    Some(NonNull::new(__rust_reallocate(ptr, old_size, layout.size, layout.align)).unwrap())
   }
 }

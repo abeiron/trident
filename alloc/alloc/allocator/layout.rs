@@ -1,3 +1,5 @@
+//! Memory allocations layout.
+
 use core::mem::{size_of, align_of};
 
 pub struct Layout
