@@ -11,18 +11,18 @@
 Allocations crate for the Trident kernel.
 */
 
-pub mod alloc;
+pub(crate) mod alloc;
 pub use self::alloc::Global;
 pub use self::alloc::Layout;
 pub use self::alloc::Locked;
 
-pub mod array;
+pub(crate) mod array;
 pub use self::array::Array;
 
 pub mod collections;
 pub mod hash;
 pub mod math;
 
-pub mod string;
+pub(crate) mod string;
 pub use self::string::String;
 pub use self::string::StringWide;
