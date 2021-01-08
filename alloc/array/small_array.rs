@@ -20,7 +20,7 @@ pub trait StackArray
   fn as_mut_ptr(&mut self) -> *mut Self::Element;
 }
 
-enum SmallArrayData<S, A = GlobalAllocator>
+enum SmallArrayData<S, A = Global>
   where
       S: StackArray,
       A: Allocator,
@@ -29,7 +29,7 @@ enum SmallArrayData<S, A = GlobalAllocator>
   Heap(Array<S::Element, A>),
 }
 
-pub struct SmallArray<S, A = GlobalAllocator>
+pub struct SmallArray<S, A = Global>
   where
       S: StackArray,
       A: Allocator,
@@ -273,13 +273,13 @@ impl<S, A> DerefMut for SmallArray<S, A>
   }
 }
 
-impl<S> SmallArray<S, GlobalAllocator>
+impl<S> SmallArray<S, Global>
   where
       S: StackArray,
 {
   pub fn new() -> Self
   {
-    Self::new_with(GlobalAllocator)
+    Self::new_with(Global)
   }
 }
 
@@ -325,7 +325,7 @@ macro_rules! impl_stack_array {
             }
         }
 
-        pub type $name<T, A = GlobalAllocator> = SmallArray<[T; $len], A>;
+        pub type $name<T, A = Global> = SmallArray<[T; $len], A>;
     };
 }
 

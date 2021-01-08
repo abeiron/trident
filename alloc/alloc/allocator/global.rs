@@ -1,9 +1,9 @@
 /*TODO: Implement a global allocator.*/
 
 use super::{Allocator, Layout, HEAP};
-use core::cmp::{min, max};
+use core::cmp::{min};
 use core::ffi::c_void;
-use core::ptr::{self, read_unaligned, write_unaligned, NonNull};
+use core::ptr::{self, NonNull};
 
 #[no_mangle]
 pub extern "C" fn __rust_allocate(size: usize, align: usize) -> *mut u8

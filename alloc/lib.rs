@@ -1,7 +1,9 @@
 #![deny(clippy::all)]
 #![deny(missing_docs)]
+#![allow(dead_code)]
 #![feature(allocator_api)]
 #![feature(alloc_error_handler)]
+#![feature(associated_type_defaults)]
 #![feature(const_fn)]
 #![feature(const_mut_refs)]
 #![feature(lang_items)]
@@ -12,9 +14,7 @@ Allocations crate for the Trident kernel.
 */
 
 pub(crate) mod alloc;
-pub use self::alloc::Global;
-pub use self::alloc::Layout;
-pub use self::alloc::Locked;
+pub use self::alloc::*;
 
 pub(crate) mod array;
 pub use self::array::Array;

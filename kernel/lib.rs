@@ -1,17 +1,19 @@
-#![deny(clippy::all)]
-#![cfg_attr(not(test), no_std)]
 /*!
 # The Trident System
 ====================
 
 Trident is an exokernel system designed for performance, stability, and modularity.
 */
+#![deny(clippy::all)]
+#![cfg_attr(not(test), no_std)]
 
-// Lazy static initialisation
+//=================================KERNEL ENTRY MODULE==================================//
+
+// Lazily initialised statics
 #[macro_use] extern crate lazy_static;
 
-pub(crate) extern crate t_alloc as alloc;
-pub(crate) extern crate t_console as console;
+// Trident system crate; contains core funtionality and a way to interface with the underlying hardware.
+extern crate trident_sys as system;
 
 pub mod io;
 
@@ -21,8 +23,12 @@ mod test;
 #[no_mangle]
 pub extern "C" fn kmain() -> !
 {
-  loop
-  {
+  use system::alloc;
+  use system::console;
+
+  alloc::init_heap();
+
+  loop {
     console::println!("Hello, world!");
   }
 }

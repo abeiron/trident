@@ -43,7 +43,7 @@ impl<T, A> HashSet<T, A>
 
   pub fn insert(&mut self, val: T) -> bool
   {
-    self.map.insert(value, ())
+    self.map.insert(val, ())
   }
 
   pub fn len(&self) -> usize

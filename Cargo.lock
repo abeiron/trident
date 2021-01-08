@@ -79,8 +79,7 @@ name = "t_xkernel"
 version = "0.1.0"
 dependencies = [
  "lazy_static",
- "t_alloc",
- "t_console",
+ "trident-sys",
 ]
 
 [[package]]

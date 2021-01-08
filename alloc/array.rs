@@ -22,7 +22,7 @@ pub struct Array<T, A: Allocator = Global>
   buf: RawArray<T, A>,
 }
 
-impl<T, A: Allocator> Array<T, A: Allocator>
+impl<T, A: Allocator> Array<T, A>
 {
   pub fn new_with(alloc: A) -> Self
   {
@@ -159,7 +159,7 @@ impl<T, A: Allocator> Array<T, A: Allocator>
   }
 }
 
-impl<T, A> Array<T, Global>
+impl<T, A: Allocator> Array<T, Global>
 {
   pub fn new() -> Self
   {

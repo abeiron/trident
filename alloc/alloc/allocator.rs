@@ -7,7 +7,6 @@ pub use self::layout::Layout;
 use core::ffi::c_void;
 use core::mem::size_of;
 use core::ptr::{read_unaligned, write_unaligned, NonNull};
-use linked_list_allocator::LockedHeap;
 use spin::{Mutex, MutexGuard};
 
 pub mod global;
@@ -26,12 +25,14 @@ pub unsafe fn alloc_array<T>(alloc: &mut dyn Allocator, size: usize) -> Option<N
 }
 
 /// A wrapper around spin::Mutex to permit trait implementations.
-pub struct Locked<A>
+pub struct Locked<A: Allocator>
 {
   inner: Mutex<A>,
 }
 
 impl<A> Locked<A>
+where
+    A: Allocator
 {
   pub const fn new(inner: A) -> Self
   {
@@ -95,3 +96,4 @@ pub unsafe trait Allocator
     self.dealloc(actual_ptr as *mut c_void, layout);
   }
 }
+
