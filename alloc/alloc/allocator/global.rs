@@ -1,10 +1,11 @@
-/*TODO: Implement a global allocator.*/
+//! Implements a "global" allocator.
 
 use super::{Allocator, Layout, HEAP};
 use core::cmp::{min};
 use core::ffi::c_void;
 use core::ptr::{self, NonNull};
 
+#[doc(hidden)]
 #[no_mangle]
 pub extern "C" fn __rust_allocate(size: usize, align: usize) -> *mut c_void
 {
@@ -17,6 +18,8 @@ pub extern "C" fn __rust_allocate(size: usize, align: usize) -> *mut c_void
   }
 }
 
+#[doc(hidden)]
+#[no_mangle]
 pub extern "C" fn __rust_deallocate(ptr: *mut c_void, old_size: usize, align: usize)
 {
   unsafe {
@@ -52,6 +55,8 @@ pub extern "C" fn __rust_reallocate(
 }
 
 /// We do not support in-place reallocation, so just return `old_size`.
+///
+/// :shrug:
 #[no_mangle]
 pub extern "C" fn __rust_reallocate_inplace(
   _ptr: *mut c_void,
@@ -66,6 +71,8 @@ pub extern "C" fn __rust_reallocate_inplace(
 /// I have no idea what this actually does, but we're supposed to have one,
 /// and the other backends to implement it as something equivalent to the
 /// following.
+///
+/// :shrug:
 #[no_mangle]
 pub extern "C" fn __rust_usable_size(size: usize, _align: usize) -> usize
 {

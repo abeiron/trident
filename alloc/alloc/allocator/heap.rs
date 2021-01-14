@@ -24,7 +24,7 @@ use crate::math::PowersOf2;
 pub static HEAP: Mutex<Option<Heap<'static>>> = Mutex::new(None);
 
 pub unsafe fn init_heap(
-  heap_base: *mut u8,
+  heap_base: *mut c_void,
   heap_size: usize,
   free_lists: &'static mut [*mut FreeBlock],
 )
@@ -63,7 +63,7 @@ pub struct Heap<'a>
   /// The base address of our heap.
   ///
   /// Must be aligned along the boundary of `MIN_HEAP_ALIGN`.
-  heap_base: *mut u8,
+  heap_base: *mut c_void,
 
   /// The size of our heap.
   ///
@@ -96,8 +96,8 @@ unsafe impl<'a> Send for Heap<'a> {}
 
 impl<'a> Heap<'a>
 {
-  pub unsafe fn new(heap_base: *mut u8, heap_size: usize, free_lists: &mut [*mut FreeBlock])
-    -> Heap
+  pub unsafe fn new(heap_base: *mut c_void, heap_size: usize, free_lists: &mut [*mut FreeBlock])
+                    -> Heap
   {
     // The heap base must not be null.
     assert!(heap_base != ptr::null_mut());
@@ -136,23 +136,24 @@ impl<'a> Heap<'a>
 
     // Store all the info about our heap in our struct.
     let mut result = Heap {
-      heap_base: heap_base,
-      heap_size: heap_size,
-      free_lists: free_lists,
-      min_block_size: min_block_size,
+      heap_base,
+      heap_size,
+      free_lists,
+      min_block_size,
       min_block_size_log2: min_block_size.log2(),
     };
 
     // Insert the entire heap onto the appropriate free array as a
     // single block.
     let order = result
-      .allocation_order(heap_size, 1)
-      .expect("Failed to calculate order for root heap block");
+        .allocation_order(heap_size, 1)
+        .expect("Failed to calculate order for root heap block");
     result.free_list_insert(order, heap_base);
 
     // Return our newly-created heap.
     result
   }
+
   /// Figure out what size block we'll need to fulfill an allocation
   /// request.  This is deterministic, and it does not depend on what
   /// we've already allocated.  In particular, it's important to be able
@@ -198,8 +199,8 @@ impl<'a> Heap<'a>
   pub fn allocation_order(&self, size: usize, align: usize) -> Option<usize>
   {
     self
-      .allocation_size(size, align)
-      .map(|s| (s.log2() - self.min_block_size_log2) as usize)
+        .allocation_size(size, align)
+        .map(|s| (s.log2() - self.min_block_size_log2) as usize)
   }
 
   /// The size of the blocks we allocate for a given order.
@@ -209,19 +210,19 @@ impl<'a> Heap<'a>
   }
 
   /// Pop a block off the appropriate free array.
-  unsafe fn free_list_pop(&mut self, order: usize) -> Option<*mut u8>
+  unsafe fn free_list_pop(&mut self, order: usize) -> Option<*mut c_void>
   {
     let candidate = self.free_lists[order];
     if candidate != ptr::null_mut() {
       self.free_lists[order] = (*candidate).next;
-      Some(candidate as *mut u8)
+      Some(candidate as *mut c_void)
     } else {
       None
     }
   }
 
   /// Insert `block` of order `order` onto the appropriate free array.
-  unsafe fn free_list_insert(&mut self, order: usize, block: *mut u8)
+  unsafe fn free_list_insert(&mut self, order: usize, block: *mut c_void)
   {
     let free_block_ptr = block as *mut FreeBlock;
     *free_block_ptr = FreeBlock::new(self.free_lists[order]);
@@ -237,7 +238,7 @@ impl<'a> Heap<'a>
   /// because then "nursery generation" allocations would probably tend
   /// to occur at lower addresses and then be faster to find / rule out
   /// finding.
-  unsafe fn free_list_remove(&mut self, order: usize, block: *mut u8) -> bool
+  unsafe fn free_list_remove(&mut self, order: usize, block: *mut c_void) -> bool
   {
     let block_ptr = block as *mut FreeBlock;
 
@@ -267,7 +268,7 @@ impl<'a> Heap<'a>
 
   /// Split a `block` of order `order` down into a block of order
   /// `order_needed`, placing any unused chunks on the free array.
-  unsafe fn split_free_block(&mut self, block: *mut u8, mut order: usize, order_needed: usize)
+  unsafe fn split_free_block(&mut self, block: *mut c_void, mut order: usize, order_needed: usize)
   {
     // Get the size of our starting block.
     let mut size_to_split = self.order_size(order);
@@ -324,7 +325,7 @@ impl<'a> Heap<'a>
   /// Given a `block` with the specified `order`, find the "buddy" block,
   /// that is, the other half of the block we originally split it from,
   /// and also the block we could potentially merge it with.
-  pub unsafe fn buddy(&self, order: usize, block: *mut u8) -> Option<*mut u8>
+  pub unsafe fn buddy(&self, order: usize, block: *mut c_void) -> Option<*mut c_void>
   {
     let relative = (block as usize) - (self.heap_base as usize);
     let size = self.order_size(order);
@@ -344,8 +345,8 @@ impl<'a> Heap<'a>
   pub unsafe fn deallocate(&mut self, ptr: *mut c_void, old_size: usize, align: usize)
   {
     let initial_order = self
-      .allocation_order(old_size, align)
-      .expect("Tried to dispose of invalid block");
+        .allocation_order(old_size, align)
+        .expect("Tried to dispose of invalid block");
 
     // The fun part: When deallocating a block, we also want to check
     // to see if its "buddy" is on the free array.  If the buddy block
@@ -393,7 +394,7 @@ mod test
   {
     unsafe {
       let heap_size = 256;
-      let mem = memalign(4096, heap_size);
+      let mem = memalign(4096, heap_size) as *mut c_void;
       let mut free_lists: [*mut FreeBlock; 5] = [0 as *mut _; 5];
       let heap = Heap::new(mem, heap_size, &mut free_lists);
 
@@ -423,7 +424,7 @@ mod test
       assert_eq!(Some(4), heap.allocation_order(256, 256));
       assert_eq!(None, heap.allocation_order(512, 512));
 
-      free(mem);
+      free(mem as *mut u8);
     }
   }
 
@@ -432,7 +433,7 @@ mod test
   {
     unsafe {
       let heap_size = 256;
-      let mem = memalign(4096, heap_size);
+      let mem = memalign(4096, heap_size) as *mut c_void;
       let mut free_lists: [*mut FreeBlock; 5] = [0 as *mut _; 5];
       let heap = Heap::new(mem, heap_size, &mut free_lists);
 
@@ -454,7 +455,7 @@ mod test
       let block_256_0 = mem;
       assert_eq!(None, heap.buddy(4, block_256_0));
 
-      free(mem);
+      free(mem as *mut u8);
     }
   }
 
@@ -463,7 +464,7 @@ mod test
   {
     unsafe {
       let heap_size = 256;
-      let mem = memalign(4096, heap_size);
+      let mem = memalign(4096, heap_size) as *mut c_void;
       let mut free_lists: [*mut FreeBlock; 5] = [0 as *mut _; 5];
       let mut heap = Heap::new(mem, heap_size, &mut free_lists);
 
@@ -511,7 +512,7 @@ mod test
       let block_256_0 = heap.allocate(256, 256);
       assert_eq!(mem.offset(0), block_256_0);
 
-      free(mem);
+      free(mem as *mut u8);
     }
   }
 }

@@ -2,5 +2,7 @@
 Define memory allocation strategies.
 */
 
-pub mod allocator;
 pub use allocator::*;
+
+pub mod allocator;
+pub mod layout;
