@@ -6,7 +6,7 @@ use volatile::Volatile;
 #[repr(C)]
 pub struct Char
 {
-  pub cp: u8,
+  pub point: u8,
   pub colour: ColourCode,
 }
 

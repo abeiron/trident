@@ -33,7 +33,7 @@ impl Writer
 
         let colour_code = self.colour_code;
         self.buf.chars[row][col].write(Char {
-          cp: byte,
+          point: byte,
           colour,
         });
 
@@ -69,7 +69,7 @@ impl Writer
   fn clear_row(&mut self, row: usize)
   {
     let blank = Char {
-      cp: b' ',
+      point: b' ',
       colour: self.colour_code,
     };
 

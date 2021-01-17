@@ -21,6 +21,7 @@ pub use self::array::Array;
 
 pub mod collections;
 pub mod hash;
+pub mod fmt;
 pub mod math;
 
 pub(crate) mod mmio;
