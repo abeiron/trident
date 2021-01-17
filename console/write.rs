@@ -32,9 +32,9 @@ impl Writer
         let col = self.col_pos;
 
         let colour_code = self.colour_code;
-        self.buf.chars[row][col].write(ScreenChar {
-          ascii_char: byte,
-          colour_code,
+        self.buf.chars[row][col].write(Char {
+          cp: byte,
+          colour,
         });
 
         self.col_pos += 1;
@@ -68,10 +68,11 @@ impl Writer
 
   fn clear_row(&mut self, row: usize)
   {
-    let blank = ScreenChar {
-      ascii_char: b' ',
-      colour_code: self.colour_code,
+    let blank = Char {
+      cp: b' ',
+      colour: self.colour_code,
     };
+
     for col in 0..BUF_WIDTH {
       self.buf.chars[row][col].write(blank);
     }

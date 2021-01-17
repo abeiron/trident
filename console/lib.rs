@@ -7,6 +7,8 @@
 Trident console library.
 */
 
+extern crate t_alloc as alloc;
+
 #[macro_use]
 extern crate lazy_static;
 extern crate volatile;
@@ -17,4 +19,4 @@ pub(crate) mod write;
 mod panic;
 
 pub use self::colour::{Colour, ColourCode};
-pub use self::write::{_print, print, println};
+pub use self::write::{print, println};

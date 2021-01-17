@@ -4,15 +4,15 @@ use volatile::Volatile;
 
 #[derive(Clone, Copy, PartialEq, Eq)]
 #[repr(C)]
-pub struct ScreenChar
+pub struct Char
 {
-  pub ascii_char: u8,
-  pub colour_code: ColourCode,
+  pub cp: u8,
+  pub colour: ColourCode,
 }
 
-impl Deref for ScreenChar
+impl Deref for Char
 {
-  type Target = ScreenChar;
+  type Target = Char;
 
   #[inline]
   fn deref(&self) -> &Self::Target
@@ -21,7 +21,7 @@ impl Deref for ScreenChar
   }
 }
 
-impl DerefMut for ScreenChar
+impl DerefMut for Char
 {
   #[inline]
   fn deref_mut(&mut self) -> &mut Self::Target
@@ -36,5 +36,5 @@ pub const BUF_WIDTH: usize = 80;
 #[repr(transparent)]
 pub struct Buffer
 {
-  pub chars: [[Volatile<ScreenChar>; BUF_WIDTH]; BUF_HEIGHT],
+  pub chars: [[Volatile<Char>; BUF_WIDTH]; BUF_HEIGHT],
 }

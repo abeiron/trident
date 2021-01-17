@@ -1,9 +1,3 @@
-/*!
-# The Trident System
-====================
-
-Trident is an kernel system designed for performance, stability, and modularity.
-*/
 #![deny(clippy::all)]
 #![deny(missing_docs)]
 #![cfg_attr(not(test), no_std)]
@@ -11,6 +5,12 @@ Trident is an kernel system designed for performance, stability, and modularity.
 #![feature(const_raw_pointer_to_usize_cast)]
 #![feature(global_asm)]
 #![feature(llvm_asm)]
+/*!
+# The Trident System
+====================
+
+Trident is an kernel system designed for performance, stability, and modularity.
+*/
 
 //=================================KERNEL ENTRY MODULE==================================//
 

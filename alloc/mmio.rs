@@ -1,5 +1,3 @@
-//! MMIO module.
-
 /// # Safety
 ///
 /// We label the mmio function unsafe since

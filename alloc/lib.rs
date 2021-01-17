@@ -23,6 +23,10 @@ pub mod collections;
 pub mod hash;
 pub mod math;
 
+pub(crate) mod mmio;
+
 pub(crate) mod string;
 pub use self::string::String;
 pub use self::string::StringWide;
+
+pub mod uart;
