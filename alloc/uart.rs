@@ -1,11 +1,21 @@
 //! Implements a Universal Asynchronous Receiver / Transmitter.
 
-use core::fmt::{Error, Debug, Write};
+use crate::access::*;
+
+use core::{
+  intrinsics,
+  fmt::{self, Error, Debug, Write},
+  marker::PhantomData,
+  ops::{Deref, DerefMut, Index, IndexMut, Range, RangeBounds},
+  ptr,
+  slice::SliceIndex,
+};
+
 use spin::Mutex;
 
 pub struct Uart
 {
-  base: usize,
+  pub base: usize,
 }
 
 impl Uart
@@ -131,6 +141,54 @@ impl UartDriver
 {
   pub fn new(base: usize) -> Mutex<Uart>
   {
-    Mutex::new(Uart::new(base))
+    Mutex::new(Uart { base })
+  }
+}
+
+pub struct VolUart<R, A = ReadWrite>
+{
+  reference: R,
+  access: PhantomData<A>
+}
+
+impl<R> VolUart<R>
+{
+  pub const fn new(reference: R) -> VolUart<R>
+  {
+    VolUart {
+      reference,
+      access: PhantomData,
+    }
+  }
+
+  pub const fn new_read_only(reference: R) -> VolUart<R>
+  {
+    VolUart {
+      reference,
+      access: PhantomData,
+    }
+  }
+
+  pub const fn new_write_only(reference: R) -> VolUart<R>
+  {
+    VolUart {
+      reference,
+      access: PhantomData,
+    }
+  }
+}
+
+impl<R, T, A> VolUart<R, A>
+  where
+      R: Deref<Target = T>,
+      T: Copy,
+{
+  pub fn read(&self) -> T
+  {
+    let uart = self::UartDriver::new(0x1000_0000);
+
+    if let Some(c) = uart.lock().get() {
+      
+    }
   }
 }

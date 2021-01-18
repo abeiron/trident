@@ -34,6 +34,11 @@ pub trait Write
   /// ```
   fn write_str(&mut self, s: &str) -> Result;
 
+  fn write_char(&mut self, c: char) -> Result
+  {
+    self.write_str(c.encode_utf8(&mut [0; 4]))
+  }
+
   fn write_fmt(&mut self, args: Arguments<'_>) -> Result
   {
     todo!()
