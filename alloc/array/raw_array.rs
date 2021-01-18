@@ -1,6 +1,6 @@
 use core::{ffi::c_void, marker::PhantomData, mem::size_of, ptr::null_mut};
 use crate::{
-  alloc::{alloc_array, Allocator},
+  alloc::{alloc_array, Allocator, Layout},
 };
 
 pub(crate) struct RawArray<T, A: Allocator>
@@ -42,7 +42,7 @@ impl<T, A: Allocator> RawArray<T, A>
     {
       unsafe {
         ptr.copy_from(self.ptr, self.capacity);
-        self.alloc.dealloc_aligned(self.ptr as *mut c_void);
+        self.alloc.dealloc_aligned(self.ptr as *mut c_void, Layout::new(self.capacity));
       }
     }
 
@@ -58,7 +58,7 @@ impl<T, A: Allocator> Drop for RawArray<T, A>
     if !self.ptr.is_null()
     {
       unsafe {
-        self.alloc.dealloc_aligned(self.ptr as *mut c_void);
+        self.alloc.dealloc_aligned(self.ptr as *mut c_void, Layout::new(self.capacity));
       }
     }
   }

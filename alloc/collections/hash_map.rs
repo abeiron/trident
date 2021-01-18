@@ -94,7 +94,7 @@ struct HashMapInner<K, V, A>
   buckets: Array<Option<Bucket<K, V>>, A>,
 }
 
-impl<K, V, A> HashMapInner<K, V, A>
+impl<K: Hash + PartialEq + Eq, V, A: Allocator + Clone> HashMapInner<K, V, A>
 {
   fn new_with(alloc: A) -> Self
   {
@@ -420,7 +420,7 @@ impl<K, V, A> HashMap<K, V, A>
         K: Borrow<Q>,
         Q: Hash + Eq + ?Sized,
   {
-    let hash = self.computer_hash(key);
+    let hash = self.compute_hash(key);
     return self.inner.find_mut(hash, key);
   }
 }

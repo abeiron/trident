@@ -137,7 +137,7 @@ impl<R> Volatile<R>
 impl<R, T, A> Volatile<R, A>
   where
       R: Deref<Target=T>,
-      T: Copy,
+      T: Copy + DerefMut,
 {
   /// Performs a volatile read of the contained value.
   ///
@@ -161,7 +161,7 @@ impl<R, T, A> Volatile<R, A>
   /// ```
   pub fn read(&self) -> T
     where
-        A: Readable
+        A: Readable,
   {
     unsafe { ptr::read_volatile(&*self.reference) }
   }
@@ -186,7 +186,7 @@ impl<R, T, A> Volatile<R, A>
   pub fn write(&mut self, val: T)
     where
         A: Writable,
-        T: DerefMut,
+        R: DerefMut,
   {
     unsafe { ptr::write_volatile(&mut *self.reference, val) };
   }
@@ -250,7 +250,7 @@ impl<R, A> Volatile<R, A> {
 }
 
 /// Transformation methods for accessing struct fields
-impl<R, T, A> Volatile<R, A>
+impl<R, T: 'a, A> Volatile<R, A>
   where
       R: Deref<Target=T>,
       T: ?Sized,
@@ -294,7 +294,7 @@ impl<R, T, A> Volatile<R, A>
   ///    value
   /// });
   /// ```
-  pub fn map<'a, F, U>(&'a self, f: F) -> Volatile<&'a U, A>
+  pub fn map<F, U>(&'a self, f: F) -> Volatile<&'a U, A>
     where
         F: FnOnce(&'a T) -> &'a U,
         U: ?Sized,
@@ -345,7 +345,7 @@ impl<R, T, A> Volatile<R, A>
   ///    value
   /// });
   /// ```
-  pub fn map_mut<'a, F, U>(&'a mut self, f: F) -> Volatile<&'a mut U, A>
+  pub fn map_mut<F, U>(&mut self, f: F) -> Volatile<&mut U, A>
     where
         F: FnOnce(&mut T) -> &mut U,
         R: DerefMut,
@@ -360,7 +360,7 @@ impl<R, T, A> Volatile<R, A>
 }
 
 /// Methods for volatile slices
-impl<T, R, A> Volatile<R, A>
+impl<T: 'a, R, A> Volatile<R, A>
   where
       R: Deref<Target=[T]>,
 {
@@ -396,7 +396,7 @@ impl<T, R, A> Volatile<R, A>
   /// let subslice = volatile.index(1..);
   /// assert_eq!(subslice.index(0).read(), 2);
   /// ```
-  pub fn index<'a, I>(&'a self, index: I) -> Volatile<&'a I::Output, A>
+  pub fn index<I>(&self, index: I) -> Volatile<&I::Output, A>
     where
         I: SliceIndex<[T]>,
         T: 'a,
@@ -438,7 +438,7 @@ impl<T, R, A> Volatile<R, A>
   /// subslice.index_mut(0).write(6);
   /// assert_eq!(subslice.index(0).read(), 6);
   /// ```
-  pub fn index_mut<'a, I>(&'a mut self, index: I) -> Volatile<&mut I::Output, A>
+  pub fn index_mut<I>(&mut self, index: I) -> Volatile<&mut I::Output, A>
     where
         I: SliceIndex<[T]>,
         R: DerefMut,
@@ -769,7 +769,7 @@ impl<R> Volatile<R> {
 impl<R, T, A> fmt::Debug for Volatile<R, A>
   where
       R: Deref<Target=T>,
-      T: Copy + fmt::Debug,
+      T: Copy + fmt::Debug + DerefMut,
       A: Readable,
 {
   fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {

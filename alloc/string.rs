@@ -125,7 +125,7 @@ impl String<Global>
   /// ```
   pub fn from(s: &str) -> Self
   {
-    Self::from_string_with(s, Global)
+    Self::from_str_with(s, Global)
   }
 }
 

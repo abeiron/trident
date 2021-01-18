@@ -159,7 +159,7 @@ impl<T, A: Allocator> Array<T, A>
   }
 }
 
-impl<T, A: Allocator> Array<T, Global>
+impl<T> Array<T, Global>
 {
   pub fn new() -> Self
   {
@@ -171,7 +171,7 @@ impl<T, A: Allocator> Drop for Array<T, A>
 {
   fn drop(&mut self)
   {
-    if !self.buf.is_null() {
+    if !self.buf.ptr.is_null() {
       self.clear();
     }
   }

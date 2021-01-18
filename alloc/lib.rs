@@ -9,6 +9,7 @@
 #![feature(const_generics)]
 #![feature(const_mut_refs)]
 #![feature(core_intrinsics)]
+#![feature(in_band_lifetimes)]
 #![feature(lang_items)]
 #![feature(wrapping_int_impl)]
 #![feature(range_bounds_assert_len)]
@@ -38,5 +39,7 @@ pub use self::string::String;
 pub use self::string::StringWide;
 
 pub mod uart;
-pub mod volatile;
+pub(crate) mod volatile;
+pub use self::volatile::Volatile;
+
 pub mod boobs;

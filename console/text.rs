@@ -1,6 +1,6 @@
 use core::ops::{Deref, DerefMut};
+use crate::alloc::Volatile;
 use super::colour::*;
-use volatile::Volatile;
 
 #[derive(Clone, Copy, PartialEq, Eq)]
 #[repr(C)]

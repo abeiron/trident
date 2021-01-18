@@ -35,7 +35,7 @@ pub fn murmur_32(key: &impl AsRef<[u8]>) -> u32
 
     h1 ^= k1;
     h1 = h1.rotate_left(13);
-    h1 = h1 * Wrapping + Wrapping(0xe6546b64);
+    h1 = h1 * Wrapping(5) + Wrapping(0xe6546b64);
   }
 
   //---------------

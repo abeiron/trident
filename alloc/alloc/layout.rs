@@ -3,6 +3,7 @@
 use core::mem::{size_of, align_of};
 
 /// Defines the layout of memory to be allocated.
+#[derive(Copy, Clone)]
 pub struct Layout
 {
   #[doc(hidden)]
@@ -29,6 +30,16 @@ impl Layout
   {
     Layout {
       size: size_of::<T>(),
+      align: align_of::<T>(),
+    }
+  }
+
+
+  #[inline]
+  pub fn from_type_array<T>(len: usize) -> Self
+  {
+    Self {
+      size: size_of::<T>() * len,
       align: align_of::<T>(),
     }
   }

@@ -79,6 +79,7 @@ pub extern "C" fn __rust_usable_size(size: usize, _align: usize) -> usize
   size
 }
 
+#[derive(Copy, Clone)]
 pub struct Global;
 
 unsafe impl Allocator for Global

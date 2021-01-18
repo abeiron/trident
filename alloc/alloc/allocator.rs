@@ -103,7 +103,7 @@ pub unsafe trait Allocator
 
     write_unaligned(actual_ptr_ptr as *mut usize, ptr);
 
-    Some(NonNull::new_unchecked(aligned_ptr as *mut c_void).unwrap())
+    Some(NonNull::new_unchecked(aligned_ptr as *mut c_void))
   }
 
   /// Deallocates an aligned block of memory.
