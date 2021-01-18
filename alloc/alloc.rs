@@ -6,3 +6,4 @@ pub use allocator::*;
 
 pub mod allocator;
 pub mod layout;
+pub mod page;

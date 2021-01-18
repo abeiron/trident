@@ -18,7 +18,16 @@
 Allocations crate for the Trident kernel.
 */
 
-/// Access modifiers for Volatile and VolUart wrappers.
+// ////////////////////////////////
+// // Allocation routines
+// ////////////////////////////////
+extern "C"
+{
+  pub static HEAP_START: usize;
+  pub static HEAP_SIZE: usize;
+}
+
+/// Access modifiers for Volatile wrapper.
 pub(crate) mod access;
 
 pub(crate) mod alloc;

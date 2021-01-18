@@ -4,6 +4,7 @@ use core::cell::RefCell;
 use core::ffi::c_void;
 use core::mem::size_of;
 use core::ptr::{NonNull, read_unaligned, write_unaligned};
+use crate::{HEAP_SIZE, HEAP_START};
 
 use spin::{Mutex, MutexGuard};
 
@@ -15,9 +16,6 @@ pub use self::heap::{HEAP, init_heap};
 pub mod global;
 pub mod heap;
 pub mod slab;
-
-pub const HEAP_START: usize = 0x_4444_4444_0000;
-pub const HEAP_SIZE: usize = 100 * 1024; // 100 KiB
 
 pub unsafe fn alloc_one<T>(alloc: &mut dyn Allocator) -> Option<NonNull<T>>
 {
@@ -87,6 +85,14 @@ pub unsafe trait Allocator
     old_size: usize,
     layout: Layout,
   ) -> Option<NonNull<c_void>>;
+
+  /// Allocate a zero a page or multiple pages.
+  ///
+  /// pages: the number of pages to allocate.
+  ///
+  /// Each page is `PAGE_SIZE` which is calculated as 1 << `PAGE_ORDER`.
+  /// On RISC-V, this is typically 4096 bytes.
+  unsafe fn zalloc(&self, layout: Layout) -> Option<NonNull<c_void>>;
 
   /// Allocates an aligned block of memory.
   unsafe fn alloc_aligned(&self, layout: Layout) -> Option<NonNull<c_void>>
