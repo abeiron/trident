@@ -10,4 +10,6 @@ pub extern crate t_console as console;
 pub mod prelude;
 pub use self::prelude::*;
 
+pub mod fmt;
+
 pub mod string;

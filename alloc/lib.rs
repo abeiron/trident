@@ -31,3 +31,4 @@ pub use self::string::String;
 pub use self::string::StringWide;
 
 pub mod uart;
+pub mod volatile;

@@ -1,5 +1,5 @@
 
-///
+/// Input/Output error type.
 #[derive(Debug, PartialEq, Copy, Clone)]
 pub enum Error
 {

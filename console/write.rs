@@ -1,4 +1,5 @@
 use super::{colour::*, text::*};
+use crate::alloc::uart::UartDriver;
 use core::fmt;
 use spin::Mutex;
 

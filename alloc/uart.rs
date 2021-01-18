@@ -1,74 +1,7 @@
 //! Implements a Universal Asynchronous Receiver / Transmitter.
 
 use core::fmt::{Error, Debug, Write};
-
-/// Initialize the UART driver by setting
-/// the word length, FIFOs, and interrupts
-pub fn init(base_addr: usize)
-{
-  let ptr = base_addr as *mut u8;
-  unsafe {
-    // First, set the word length, which
-    // are bits 0, and 1 of the line control register (LCR)
-    // which is at base_address + 3
-    // We can easily write the value 3 here or 0b11, but I'm
-    // extending it so that it is clear we're setting two individual
-    // fields
-    //         Word 0     Word 1
-    //         ~~~~~~     ~~~~~~
-    let lcr = (1 << 0) | (1 << 1);
-    ptr.add(3).write_volatile(lcr);
-
-    // Now, enable the FIFO, which is bit index 0 of the FIFO
-    // control register (FCR at offset 2).
-    // Again, we can just write 1 here, but when we use left shift,
-    // it's easier to see that we're trying to write bit index #0.
-    ptr.add(2).write_volatile(1 << 0);
-
-    // Enable receiver buffer interrupts, which is at bit index
-    // 0 of the interrupt enable register (IER at offset 1).
-    ptr.add(1).write_volatile(1 << 0);
-
-    // If we cared about the divisor, the code below would set the divisor
-    // from a global clock rate of 22.729 MHz (22,729,000 cycles per second)
-    // to a signaling rate of 2400 (BAUD). We usually have much faster signalling
-    // rates nowadays, but this demonstrates what the divisor actually does.
-    // The formula given in the NS16500A specification for calculating the divisor
-    // is:
-    // divisor = ceil( (clock_hz) / (baud_sps x 16) )
-    // So, we substitute our values and get:
-    // divisor = ceil( 22_729_000 / (2400 x 16) )
-    // divisor = ceil( 22_729_000 / 38_400 )
-    // divisor = ceil( 591.901 ) = 592
-
-    // The divisor register is two bytes (16 bits), so we need to split the value
-    // 592 into two bytes. Typically, we would calculate this based on measuring
-    // the clock rate, but again, for our purposes [qemu], this doesn't really do
-    // anything.
-    let divisor: u16 = 592;
-    let divisor_least: u8 = (divisor & 0xff) as u8;
-    let divisor_most: u8 = (divisor >> 8) as u8;
-
-    // Notice that the divisor register DLL (divisor latch least) and DLM (divisor
-    // latch most) have the same base address as the receiver/transmitter and the
-    // interrupt enable register. To change what the base address points to, we
-    // open the "divisor latch" by writing 1 into the Divisor Latch Access Bit
-    // (DLAB), which is bit index 7 of the Line Control Register (LCR) which
-    // is at base_address + 3.
-    ptr.add(3).write_volatile(lcr | 1 << 7);
-
-    // Now, base addresses 0 and 1 point to DLL and DLM, respectively.
-    // Put the lower 8 bits of the divisor into DLL
-    ptr.add(0).write_volatile(divisor_least);
-    ptr.add(1).write_volatile(divisor_most);
-
-    // Now that we've written the divisor, we never have to touch this again. In
-    // hardware, this will divide the global clock (22.729 MHz) into one suitable
-    // for 2,400 signals per second. So, to once again get access to the
-    // RBR/THR/IER registers, we need to close the DLAB bit by clearing it to 0.
-    ptr.add(3).write_volatile(lcr);
-  }
-}
+use spin::Mutex;
 
 pub struct Uart
 {
@@ -79,6 +12,76 @@ impl Uart
 {
   pub fn new(base: usize) -> Self
   {
+    Self { base }
+  }
+
+  /// Initialize the UART driver by setting
+  /// the word length, FIFOs, and interrupts
+  pub fn init(base: usize) -> Self
+  {
+    let ptr = base as *mut u8;
+    unsafe {
+      // First, set the word length, which
+      // are bits 0, and 1 of the line control register (LCR)
+      // which is at base_address + 3
+      // We can easily write the value 3 here or 0b11, but I'm
+      // extending it so that it is clear we're setting two individual
+      // fields
+      //         Word 0     Word 1
+      //         ~~~~~~     ~~~~~~
+      let lcr = (1 << 0) | (1 << 1);
+      ptr.add(3).write_volatile(lcr);
+
+      // Now, enable the FIFO, which is bit index 0 of the FIFO
+      // control register (FCR at offset 2).
+      // Again, we can just write 1 here, but when we use left shift,
+      // it's easier to see that we're trying to write bit index #0.
+      ptr.add(2).write_volatile(1 << 0);
+
+      // Enable receiver buffer interrupts, which is at bit index
+      // 0 of the interrupt enable register (IER at offset 1).
+      ptr.add(1).write_volatile(1 << 0);
+
+      // If we cared about the divisor, the code below would set the divisor
+      // from a global clock rate of 22.729 MHz (22,729,000 cycles per second)
+      // to a signaling rate of 2400 (BAUD). We usually have much faster signalling
+      // rates nowadays, but this demonstrates what the divisor actually does.
+      // The formula given in the NS16500A specification for calculating the divisor
+      // is:
+      // divisor = ceil( (clock_hz) / (baud_sps x 16) )
+      // So, we substitute our values and get:
+      // divisor = ceil( 22_729_000 / (2400 x 16) )
+      // divisor = ceil( 22_729_000 / 38_400 )
+      // divisor = ceil( 591.901 ) = 592
+
+      // The divisor register is two bytes (16 bits), so we need to split the value
+      // 592 into two bytes. Typically, we would calculate this based on measuring
+      // the clock rate, but again, for our purposes [qemu], this doesn't really do
+      // anything.
+      let divisor: u16 = 592;
+      let divisor_least: u8 = (divisor & 0xff) as u8;
+      let divisor_most: u8 = (divisor >> 8) as u8;
+
+      // Notice that the divisor register DLL (divisor latch least) and DLM (divisor
+      // latch most) have the same base address as the receiver/transmitter and the
+      // interrupt enable register. To change what the base address points to, we
+      // open the "divisor latch" by writing 1 into the Divisor Latch Access Bit
+      // (DLAB), which is bit index 7 of the Line Control Register (LCR) which
+      // is at base_address + 3.
+      ptr.add(3).write_volatile(lcr | 1 << 7);
+
+      // Now, base addresses 0 and 1 point to DLL and DLM, respectively.
+      // Put the lower 8 bits of the divisor into DLL
+      ptr.add(0).write_volatile(divisor_least);
+      ptr.add(1).write_volatile(divisor_most);
+
+      // Now that we've written the divisor, we never have to touch this again. In
+      // hardware, this will divide the global clock (22.729 MHz) into one suitable
+      // for 2,400 signals per second. So, to once again get access to the
+      // RBR/THR/IER registers, we need to close the DLAB bit by clearing it to 0.
+      ptr.add(3).write_volatile(lcr);
+    }
+
     Self { base }
   }
 
@@ -122,15 +125,12 @@ impl Write for Uart
   }
 }
 
-pub struct UartDriver
-{
-  uart: Uart
-}
+pub struct UartDriver;
 
 impl UartDriver
 {
-  pub fn new(base: usize) -> Self
+  pub fn new(base: usize) -> Mutex<Uart>
   {
-    Self { uart: Uart::new(base) }
+    Mutex::new(Uart::new(base))
   }
 }
