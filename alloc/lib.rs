@@ -1,3 +1,4 @@
+//! Allocations crate for the Trident kernel.
 #![deny(clippy::all)]
 #![warn(missing_docs)]
 #![allow(dead_code)]
@@ -14,13 +15,11 @@
 #![feature(wrapping_int_impl)]
 #![feature(range_bounds_assert_len)]
 #![cfg_attr(not(test), no_std)]
-/*!
-Allocations crate for the Trident kernel.
-*/
 
-// ////////////////////////////////
-// // Allocation routines
-// ////////////////////////////////
+/////////////////////////////////
+////// Allocation routines //////
+/////////////////////////////////
+
 extern "C"
 {
   pub static HEAP_START: usize;
@@ -51,4 +50,5 @@ pub mod uart;
 pub(crate) mod volatile;
 pub use self::volatile::Volatile;
 
+// For the meme.
 pub mod boobs;

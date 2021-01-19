@@ -23,7 +23,7 @@ pub unsafe fn write(addr: usize, offset: usize, val: u8)
 /// make any guarantees when we do this.
 pub unsafe fn read(addr: usize, offset: usize, _val: u8) -> u8
 {
-  	// Set the pointer based off of the address
+	// Set the pointer based off of the address
 	let reg = addr as *mut u8;
 
 	// read_volatile() is much like write_volatile() except it
