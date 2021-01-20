@@ -1,10 +1,9 @@
 [workspace]
 members = [
-	"alloc",
-	"console",
-	"kernel",
-	"system",
-]
-exclude = [
-  "boot"
+  "alloc",
+  "boot",
+  "console",
+  "core",
+  "kernel",
+  "system",
 ]

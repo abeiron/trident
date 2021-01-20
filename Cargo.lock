@@ -66,6 +66,10 @@ dependencies = [
 ]
 
 [[package]]
+name = "t_boot"
+version = "0.1.0"
+
+[[package]]
 name = "t_console"
 version = "0.1.0"
 dependencies = [
@@ -74,6 +78,10 @@ dependencies = [
  "t_alloc",
  "volatile",
 ]
+
+[[package]]
+name = "t_core"
+version = "0.1.0"
 
 [[package]]
 name = "t_xkernel"

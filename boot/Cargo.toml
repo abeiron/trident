@@ -1,5 +1,5 @@
 [package]
-name = "boot"
+name = "t_boot"
 version = "0.1.0"
 authors = ["Mnimi Aionios <mechild02@gmail.com>"]
 edition = "2018"
@@ -9,9 +9,9 @@ edition = "2018"
 [dependencies]
 
 [[bin]]
-name = "boot"
+name = "t_bootimg"
 path = "main.rs"
 
 [lib]
-name = "boot"
+name = "t_bootloader"
 path = "lib.rs"
