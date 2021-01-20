@@ -22,33 +22,36 @@
 
 extern "C"
 {
+  /// The starting point designation for the Heap
   pub static HEAP_START: usize;
+
+  /// The overall size of the Heap
   pub static HEAP_SIZE: usize;
 }
 
 /// Access modifiers for Volatile wrapper.
-pub(crate) mod access;
+pub mod access;
 
-pub(crate) mod alloc;
+pub mod alloc;
 pub use self::alloc::*;
 
-pub(crate) mod array;
+pub mod array;
 pub use self::array::Array;
 
 pub mod collections;
 pub mod hash;
 pub mod fmt;
 pub mod math;
+pub mod mmio;
 
-pub(crate) mod mmio;
-
-pub(crate) mod string;
+pub mod string;
 pub use self::string::String;
 pub use self::string::StringWide;
 
 pub mod uart;
-pub(crate) mod volatile;
+
+pub mod volatile;
 pub use self::volatile::Volatile;
 
-// For the meme.
-pub mod boobs;
+/// For the meme.
+mod boobs;
