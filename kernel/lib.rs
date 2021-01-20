@@ -1,16 +1,16 @@
+/*!
+# The Trident System
+====================
+
+Trident is a kernel system designed for performance, stability, and modularity.
+*/
 #![deny(clippy::all)]
-#![deny(missing_docs)]
+#![warn(missing_docs)]
 #![cfg_attr(not(test), no_std)]
 #![feature(asm)]
 #![feature(const_raw_pointer_to_usize_cast)]
 #![feature(global_asm)]
 #![feature(llvm_asm)]
-/*!
-# The Trident System
-====================
-
-Trident is an kernel system designed for performance, stability, and modularity.
-*/
 
 //=================================KERNEL ENTRY MODULE==================================//
 
@@ -18,7 +18,7 @@ Trident is an kernel system designed for performance, stability, and modularity.
 #[macro_use] extern crate lazy_static;
 
 // Trident system crate; contains core functionality and a way to interface with the underlying hardware.
-extern crate trident_sys as system;
+extern crate t_system as system;
 
 #[doc(hidden)]
 pub mod asm;

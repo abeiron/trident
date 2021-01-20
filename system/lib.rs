@@ -6,6 +6,7 @@
 
 pub extern crate t_alloc as alloc;
 pub extern crate t_console as console;
+pub extern crate t_core as core;
 
 pub mod prelude;
 pub use self::prelude::*;

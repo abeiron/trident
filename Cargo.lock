@@ -97,6 +97,7 @@ version = "0.1.0"
 dependencies = [
  "t_alloc",
  "t_console",
+ "t_core",
 ]
 
 [[package]]

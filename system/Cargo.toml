@@ -9,6 +9,7 @@ edition = "2018"
 [dependencies]
 t_alloc   = { path = "../alloc", version = "*"}
 t_console = { path = "../console", version = "*" }
+t_core = { path = "../core", version = "*" }
 
 [lib]
 name = "t_system"
