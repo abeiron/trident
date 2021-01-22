@@ -1,4 +1,5 @@
 //! The Core library for the Trident kernel system.
+
 #![deny(clippy::all)]
 #![warn(missing_docs)]
 #![allow(dead_code)]

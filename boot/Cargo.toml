@@ -9,9 +9,9 @@ edition = "2018"
 [dependencies]
 
 [[bin]]
-name = "t_bootimg"
+name = "t_bootloader"
 path = "main.rs"
 
 [lib]
-name = "t_bootloader"
+name = "t_bootimg"
 path = "lib.rs"
