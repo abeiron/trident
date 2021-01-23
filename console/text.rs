@@ -1,5 +1,5 @@
 use core::ops::{Deref, DerefMut};
-use crate::alloc::Volatile;
+use crate::alloc::volatile::Volatile;
 use super::colour::*;
 
 #[derive(Clone, Copy, PartialEq, Eq)]

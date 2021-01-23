@@ -16,6 +16,13 @@
 #![feature(range_bounds_assert_len)]
 #![cfg_attr(not(test), no_std)]
 
+pub extern crate spin;
+pub extern crate volatile;
+
+#[macro_use]
+extern crate lazy_static;
+extern crate linked_list_allocator;
+
 /////////////////////////////////
 ////// Allocation routines //////
 /////////////////////////////////
@@ -49,9 +56,6 @@ pub use self::string::String;
 pub use self::string::StringWide;
 
 pub mod uart;
-
-pub mod volatile;
-pub use self::volatile::Volatile;
 
 /// For the meme.
 mod boobs;
