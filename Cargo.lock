@@ -286,21 +286,21 @@ dependencies = [
 ]
 
 [[package]]
-name = "t_xkernel"
-version = "0.1.0"
-dependencies = [
- "lazy_static",
- "t_boot",
- "trident-sys",
-]
-
-[[package]]
 name = "thread_local"
 version = "1.1.1"
 source = "registry+https://github.com/rust-lang/crates.io-index"
 checksum = "301bdd13d23c49672926be451130892d274d3ba0b410c18e00daa7990ff38d99"
 dependencies = [
  "once_cell",
+]
+
+[[package]]
+name = "trident-kernel"
+version = "0.1.0"
+dependencies = [
+ "lazy_static",
+ "t_boot",
+ "trident-sys",
 ]
 
 [[package]]

@@ -82,30 +82,33 @@ pub unsafe extern "C" fn start_rust() -> !
 /// or one of the core interrupt handlers is called.
 #[link_section = ".trap.rust"]
 #[export_name = "_start_trap_rust"]
-pub extern "C" fn start_trap_rust(trap_frame: *const TrapFrame) {
-  extern "C" {
+pub extern "C" fn start_trap_rust(trap_frame: *const TrapFrame)
+{
+  extern "C"
+  {
     fn ExceptionHandler(trap_frame: &TrapFrame);
     fn DefaultHandler();
   }
 
-  unsafe {
-    let cause = mcause::read();
-    if cause.is_exception() {
-      ExceptionHandler(&*trap_frame)
-    } else {
-      let code = cause.code();
-      if code < __INTERRUPTS.len() {
-        let h = &__INTERRUPTS[code];
-        if h.reserved == 0 {
-          DefaultHandler();
+  unsafe
+      {
+        let cause = mcause::read();
+        if cause.is_exception() {
+          ExceptionHandler(&*trap_frame)
         } else {
-          (h.handler)();
+          let code = cause.code();
+          if code < __INTERRUPTS.len() {
+            let h = &__INTERRUPTS[code];
+            if h.reserved == 0 {
+              DefaultHandler();
+            } else {
+              (h.handler)();
+            }
+          } else {
+            DefaultHandler();
+          }
         }
-      } else {
-        DefaultHandler();
       }
-    }
-  }
 }
 
 #[doc(hidden)]
@@ -120,7 +123,8 @@ pub fn DefaultExceptionHandler(tf: &TrapFrame) -> !
 #[doc(hidden)]
 #[no_mangle]
 #[allow(unused_variables, non_snake_case)]
-pub fn DefaultInterruptHandler() {
+pub fn DefaultInterruptHandler()
+{
   loop {
     // Prevent this from turning into a UDF instruction
     // see rust-lang/rust#28728 for details
@@ -130,7 +134,8 @@ pub fn DefaultInterruptHandler() {
 
 /* Interrupts */
 #[doc(hidden)]
-pub enum Interrupt {
+pub enum Interrupt
+{
   UserSoft,
   SupervisorSoft,
   MachineSoft,
@@ -144,7 +149,8 @@ pub enum Interrupt {
 
 pub use self::Interrupt as interrupt;
 
-extern "C" {
+extern "C"
+{
   fn UserSoft();
   fn SupervisorSoft();
   fn MachineSoft();
@@ -157,7 +163,8 @@ extern "C" {
 }
 
 #[doc(hidden)]
-pub union Vector {
+pub union Vector
+{
   handler: unsafe extern "C" fn(),
   reserved: usize,
 }
@@ -201,7 +208,8 @@ pub unsafe extern "Rust" fn default_pre_init() {}
 #[doc(hidden)]
 #[no_mangle]
 #[rustfmt::skip]
-pub extern "Rust" fn default_mp_hook() -> bool {
+pub extern "Rust" fn default_mp_hook() -> bool
+{
   use riscv::register::mhartid;
   match mhartid::read() {
     0 => true,

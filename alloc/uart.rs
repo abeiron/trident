@@ -1,5 +1,9 @@
 //! Implements a Universal Asynchronous Receiver / Transmitter.
 
+lazy_static! {
+  pub static ref UART_DRIVER: Mutex<Uart> = Mutex::new(Uart::new(0x1000_0000));
+}
+
 use crate::access::*;
 
 use core::{
@@ -27,9 +31,9 @@ impl Uart
 
   /// Initialize the UART driver by setting
   /// the word length, FIFOs, and interrupts
-  pub fn init(base: usize) -> Self
+  pub fn init(&self)
   {
-    let ptr = base as *mut u8;
+    let ptr = self.base as *mut u8;
     unsafe {
       // First, set the word length, which
       // are bits 0, and 1 of the line control register (LCR)
@@ -91,12 +95,10 @@ impl Uart
       // RBR/THR/IER registers, we need to close the DLAB bit by clearing it to 0.
       ptr.add(3).write_volatile(lcr);
     }
-
-    Self { base }
   }
 
   /// Read from the UART.
-  fn get(&self) -> Option<u8>
+  pub fn read(&self) -> Option<u8>
   {
     let ptr = self.base as *mut u8;
     unsafe {
@@ -112,7 +114,7 @@ impl Uart
   }
 
   /// Write to the UART.
-  fn put(&self, c: u8)
+  pub fn write(&self, c: u8)
   {
     let ptr = self.base as *mut u8;
     unsafe {
@@ -120,27 +122,5 @@ impl Uart
       // our stuff!
       ptr.add(0).write_volatile(c);
     }
-  }
-}
-
-impl Write for Uart
-{
-  fn write_str(&mut self, s: &str) -> Result<(), Error>
-  {
-    for c in s.bytes() {
-      self.put(c)
-    }
-
-    Ok(())
-  }
-}
-
-pub struct UartDriver;
-
-impl UartDriver
-{
-  pub fn new(base: usize) -> Mutex<Uart>
-  {
-    Mutex::new(Uart { base })
   }
 }

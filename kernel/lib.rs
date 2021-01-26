@@ -15,17 +15,16 @@ Trident is a kernel system designed for performance, stability, and modularity.
 #[macro_use] extern crate lazy_static;
 
 // Trident system bootloader.
-extern crate t_boot as boot;
+#[macro_use] extern crate t_boot as boot;
 
 // Trident system crate; contains core functionality and an interface with the underlying hardware.
 extern crate t_system as system;
-
-pub mod io;
 
 #[cfg(test)]
 mod test;
 
 #[no_mangle]
+#[boot::entry]
 pub extern "Rust" fn kmain() -> !
 {
   loop {

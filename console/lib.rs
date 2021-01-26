@@ -1,11 +1,12 @@
+/*!
+Trident console library.
+*/
+
 #![deny(clippy::all)]
 #![cfg_attr(not(test), no_std)]
 #![feature(decl_macro)]
 #![feature(llvm_asm)]
 #![feature(panic_info_message)]
-/*!
-Trident console library.
-*/
 
 extern crate t_alloc as alloc;
 

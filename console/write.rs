@@ -1,44 +1,49 @@
 use super::{colour::*, text::*};
-use crate::alloc::uart::UartDriver;
+use crate::alloc::uart::{Uart, UART_DRIVER};
 use core::fmt;
 use spin::Mutex;
 
 lazy_static! {
-  pub static ref GLOBAL_WRITER: Mutex<Writer> = Mutex::new(Writer {
-    col_pos: 0,
-    colour_code: ColourCode::new(Colour::Yellow, Colour::Black),
-    buf: unsafe { &mut *(0xb8000 as *mut Buffer) },
+  pub static ref GLOBAL_WRITER: Mutex<Writer> = Mutex::new(Writer
+  {
+    x_pos: 0,
+    y_pos: 0,
+    row  : 0,
+    col  : 0,
+    colour: ColourCode::new(Colour::Yellow, Colour::Black),
+    driver: UART_DRIVER
   });
 }
 
 pub struct Writer
 {
-  col_pos: usize,
-  colour_code: ColourCode,
-  buf: &'static mut Buffer,
+  pub x_pos : usize,
+  pub y_pos : usize,
+  pub row   : usize,
+  pub col   : usize,
+  pub colour: ColourCode,
+  driver: Mutex<Uart>,
 }
 
 impl Writer
 {
-  pub fn write_byte(&mut self, byte: u8)
+  pub fn write_byte(&mut self, point: u8)
   {
-    match byte {
+    match point {
       b'\n' => self.new_line(),
-      byte => {
-        if self.col_pos >= BUF_WIDTH {
+      point => {
+        if self.x_pos >= BUF_WIDTH {
           self.new_line();
         }
 
-        let row = BUF_HEIGHT - 1;
-        let col = self.col_pos;
+        let colour = self.colour_code;
 
-        let colour_code = self.colour_code;
-        self.buf.chars[row][col].write(Char {
-          point: byte,
+        self.driver.lock().write(Char {
+          point,
           colour,
         });
 
-        self.col_pos += 1;
+        self.x_pos += 1;
       }
     }
   }
@@ -54,12 +59,12 @@ impl Writer
     }
   }
 
-  fn new_line(&mut self) 
+  fn new_line(&mut self)
   {
     for row in 1..BUF_HEIGHT {
       for col in 0..BUF_WIDTH {
-        let character = self.buf.chars[row][col].read();
-        self.buf.chars[row - 1][col].write(character);
+        let character = self.driver.lock().read().unwrap();
+        self.driver.lock().write(character);
       }
     }
 
@@ -75,8 +80,13 @@ impl Writer
     };
 
     for col in 0..BUF_WIDTH {
-      self.buf.chars[row][col].write(blank);
+      self.driver.lock().write(blank);
     }
+  }
+
+  pub fn uart() -> Uart
+  {
+
   }
 }
 
@@ -91,20 +101,23 @@ impl fmt::Write for Writer
   }
 }
 
-pub macro print 
+/// Prints a
+#[macro_export]
+pub macro print
 {
-  ($($arg:tt)*) => ($crate::_print(format_args!($($arg)*)))
+  ($ ($ arg: tt) *) => ($ crate::_print(format_args!($ ($ arg) *)))
 }
 
-pub macro println 
+#[macro_export]
+pub macro println
 {
-  () => ($crate::print!("\n")),
-  ($($arg:tt)*) => ($crate::print!("{}\n", format_args!($($arg)*)))
+  () => ($ crate::print!("\n")),
+  ($ ($ arg: tt) *) => ($ crate::print!("{}\n", format_args!($ ($ arg) *)))
 }
 
 #[doc(hidden)]
 pub fn _print(args: fmt::Arguments)
 {
   use core::fmt::Write;
-  GLOBAL_WRITER.lock().write_fmt(args).unwrap();
+  UART_DRIVER.lock().write_fmt(args).unwrap();
 }

@@ -1,5 +1,5 @@
 [package]
-name = "t_xkernel"
+name = "trident-kernel"
 version = "0.1.0"
 authors = ["Mnimi Aionios <mechild02@gmail.com>"]
 edition = "2018"
@@ -12,6 +12,6 @@ trident-sys = { path = "../system", version = "0.1" }
 lazy_static = { version = "1.4", features = ["spin_no_std"] }
 
 [lib]
-name = "t_xkernel"
+name = "t_kernel"
 path = "lib.rs"
-crate_type = ["staticlib"]
+crate-type = ["staticlib"]
