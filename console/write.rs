@@ -1,7 +1,7 @@
 use super::{colour::*, text::*};
 use crate::alloc::uart::{Uart, UART_DRIVER};
 use core::fmt;
-use spin::Mutex;
+use spin::{Mutex, MutexGuard};
 
 lazy_static! {
   pub static ref GLOBAL_WRITER: Mutex<Writer> = Mutex::new(Writer
@@ -84,9 +84,9 @@ impl Writer
     }
   }
 
-  pub fn uart() -> Uart
+  pub fn uart(&mut self) -> MutexGuard<Uart>
   {
-
+    self.driver.lock()
   }
 }
 
@@ -119,5 +119,9 @@ pub macro println
 pub fn _print(args: fmt::Arguments)
 {
   use core::fmt::Write;
-  UART_DRIVER.lock().write_fmt(args).unwrap();
+  GLOBAL_WRITER
+      .lock()
+      .uart().lock()
+      .write_fmt(args)
+      .unwrap();
 }

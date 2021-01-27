@@ -7,12 +7,12 @@ use crate::hash::SipHash;
 
 pub const MAX_ENTITIES: usize = usize::MAX;
 
-pub struct HashedId
+pub struct HashedIndex
 {
-  inner: EntityId,
+  inner: Index,
 }
 
-impl HashedId
+impl HashedIndex
 {
   pub fn new(i: u64) -> Self
   {
@@ -23,9 +23,24 @@ impl HashedId
   }
 }
 
-pub type EntityId = u64;
+pub type Index = u64;
 
-pub trait Entity
+pub struct Entity(HashedIndex);
+
+impl Entity
 {
-  type Target = HashedId;
+  #[cfg(test)]
+  pub fn new(index: Index) -> Self
+  {
+    let hi = HashedIndex::new(index);
+    
+    Self(hi)
+  }
+  
+  /// Returns the hashed index of the `Entity`.
+  #[inline]
+  pub fn id(self) -> HashedIndex
+  {
+    self.0
+  }
 }
