@@ -174,3 +174,19 @@ pub struct Environment
   resources: HashMap<ResourceId, TrustCell<Unq<dyn Resource>>>,
 }
 
+impl Environment
+{
+  /// Creates a new, empty resource container.
+  ///
+  /// # Usage
+  ///
+  /// ```no_compile
+  /// ...
+  /// let e = Environment::empty();
+  /// ...
+  /// ```
+  pub fn empty() -> Self
+  {
+    Default::default()
+  }
+}
