@@ -23,6 +23,9 @@ pub extern crate volatile;
 extern crate lazy_static;
 extern crate linked_list_allocator;
 
+#[macro_use]
+extern crate mopa;
+
 
 pub use core::fmt;
 
@@ -49,6 +52,7 @@ pub mod array;
 pub use self::array::Array;
 
 pub mod collections;
+pub mod comp;
 pub mod hash;
 /*pub mod fmt;*/
 pub mod math;

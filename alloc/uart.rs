@@ -124,3 +124,11 @@ impl Uart
     }
   }
 }
+
+impl<R, T, A> Uart
+where
+    R: Deref<Target = T>,
+    T: Copy,
+{
+
+}
