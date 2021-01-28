@@ -23,8 +23,19 @@ pub extern crate volatile;
 extern crate lazy_static;
 extern crate linked_list_allocator;
 
+/////////////////////////////////
+////////// Re-exports ///////////
+/////////////////////////////////
 
+pub use core::borrow;
+pub use core::cell;
+pub use core::cmp;
+pub use core::convert;
 pub use core::fmt;
+pub use core::marker;
+pub use core::pin;
+
+// END "re-exports" /////////////
 
 /////////////////////////////////
 ////// Allocation routines //////
@@ -49,6 +60,11 @@ pub mod array;
 pub use self::array::Array;
 
 pub mod collections;
+pub mod comp;
+pub mod ctx;
+pub mod engine;
+pub mod entity;
+pub mod env;
 pub mod hash;
 /*pub mod fmt;*/
 pub mod math;
@@ -59,6 +75,7 @@ pub use self::string::String;
 pub use self::string::StringWide;
 
 pub mod uart;
+pub mod unique;
 
 /// For the meme.
 mod boobs;
