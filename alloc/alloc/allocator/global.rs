@@ -4,6 +4,7 @@ use super::{Allocator, Layout, HEAP};
 use core::cmp::{min};
 use core::ffi::c_void;
 use core::ptr::{self, NonNull};
+use crate::alloc::page::PAGE_SIZE;
 
 #[doc(hidden)]
 #[no_mangle]
@@ -11,10 +12,10 @@ pub extern "C" fn __rust_allocate(size: usize, align: usize) -> *mut c_void
 {
   unsafe {
     HEAP
-      .lock()
-      .as_mut()
-      .expect("must initialize heap before calling!")
-      .allocate(size, align)
+        .lock()
+        .as_mut()
+        .expect("must initialize heap before calling!")
+        .allocate(size, align)
   }
 }
 
@@ -24,10 +25,10 @@ pub extern "C" fn __rust_deallocate(ptr: *mut c_void, old_size: usize, align: us
 {
   unsafe {
     HEAP
-      .lock()
-      .as_mut()
-      .expect("must initialise heap before calling!")
-      .deallocate(ptr, old_size, align)
+        .lock()
+        .as_mut()
+        .expect("must initialise heap before calling!")
+        .deallocate(ptr, old_size, align)
   }
 }
 
@@ -97,5 +98,29 @@ unsafe impl Allocator for Global
   unsafe fn realloc(&self, ptr: *mut c_void, old_size: usize, layout: Layout) -> Option<NonNull<c_void>>
   {
     Some(NonNull::new(__rust_reallocate(ptr, old_size, layout.size, layout.align)).unwrap())
+  }
+
+  unsafe fn zalloc(&self, layout: Layout) -> Option<NonNull<c_void>>
+  {
+    // Allocate and zero a page.
+    // First, let's get the allocation.
+    let ret = self.alloc(layout);
+    if let Some(a) = ret {
+      let size = (PAGE_SIZE * pages) / 8;
+      let big_ptr = ret as *mut u64;
+      for i in 0..size {
+        // We use big_ptr so that we can force a
+        // sd (store doubleword) instruction rather than
+        // the sb. This means 8 times fewer stores than before.
+        // Typically, we have to be concerned about remaining
+        // bytes, but fortunately 4096 % 8 = 0, so we won't
+        // have any remaining bytes.
+        unsafe {
+          (*big_ptr.add(i)) = 0;
+        }
+      }
+    }
+
+    ret
   }
 }

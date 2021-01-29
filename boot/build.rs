@@ -7,7 +7,8 @@ use std::fs::{self, File};
 use std::io::Write;
 use std::path::PathBuf;
 
-fn main() {
+fn main()
+{
   let target = env::var("TARGET").unwrap();
   let out_dir = PathBuf::from(env::var("OUT_DIR").unwrap());
   let name = env::var("CARGO_PKG_NAME").unwrap();
@@ -28,7 +29,7 @@ fn main() {
     println!("cargo:rustc-link-search={}", out_dir.display());
   }
 
-  let mut fi = File::create(&dst_path.join("scripts/memory.ld"))
+  let mut fi = File::create(&out_dir.join("memory.ld"))
       .expect("could not create file");
 
   fi.write_all(include_bytes!("scripts/memory.ld"))
@@ -39,6 +40,12 @@ fn main() {
       .unwrap()
       .write_all(include_bytes!("scripts/link.ld"))
       .unwrap();
+
+  File::create(out_dir.join("virt.lds"))
+      .unwrap()
+      .write_all(include_bytes!("scripts/virt.lds"))
+      .unwrap();
+
   println!("cargo:rustc-link-search={}", out_dir.display());
 
   println!("cargo:rerun-if-changed=build.rs");

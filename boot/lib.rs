@@ -7,7 +7,7 @@
 #![allow(unused_imports)]
 #![allow(unused_variables)]
 #![feature(asm)]
-#![feature(const_raw_pointer_to_usize_cast)]
+#![feature(const_raw_pointer_to_unsize_cast)]
 #![feature(global_asm)]
 #![feature(llvm_asm)]
 #![cfg_attr(not(test), no_std)]

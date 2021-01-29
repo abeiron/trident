@@ -3,7 +3,9 @@
 /// We label the mmio function unsafe since
 /// we will be working with raw memory. Rust cannot
 /// make any guarantees when we do this.
-pub unsafe fn write(addr: usize, offset: usize, val: u8)
+pub unsafe fn write<T>(addr: usize, offset: usize, val: T)
+where
+		T: Copy,
 {
   // Set the pointer based off of the address
   let reg = addr as *mut u8;
@@ -21,14 +23,24 @@ pub unsafe fn write(addr: usize, offset: usize, val: u8)
 /// We label the mmio function unsafe since
 /// we will be working with raw memory. Rust cannot
 /// make any guarantees when we do this.
-pub unsafe fn read(addr: usize, offset: usize, _val: u8) -> u8
+pub unsafe fn read<T>(addr: usize, _val: T) -> Option<T>
+where
+		T: Copy,
 {
 	// Set the pointer based off of the address
-	let reg = addr as *mut u8;
+	let reg: *mut u8 = addr as *mut u8;
 
 	// read_volatile() is much like write_volatile() except it
 	// will grab 8-bits from the pointer and give that value to us.
+	//
 	// We don't add a semi-colon at the end here so that the value
 	// is "returned".
-	reg.add(offset).read_volatile()
+	if reg.add(5).read_volatile() & 1 == 0 {
+		// No data.
+		None
+	}
+	else {
+		// Data found!
+		Some(reg.add(0).read_volatile())
+	}
 }

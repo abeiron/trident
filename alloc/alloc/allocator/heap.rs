@@ -17,7 +17,7 @@ use core::mem::size_of;
 use core::ptr;
 use spin::Mutex;
 
-use crate::math::PowersOf2;
+use t_core::math::PowersOf2;
 
 /// Either our global system heap, or `None` if it hasn't been allocated
 /// yet.

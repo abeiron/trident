@@ -6,21 +6,22 @@ use spin::{Mutex, MutexGuard};
 lazy_static! {
   pub static ref GLOBAL_WRITER: Mutex<Writer> = Mutex::new(Writer
   {
-    x_pos: 0,
-    y_pos: 0,
-    row  : 0,
-    col  : 0,
+    x_pos : 0,
+    y_pos : 0,
+    row   : 0,
+    col   : 0,
     colour: ColourCode::new(Colour::Yellow, Colour::Black),
     driver: UART_DRIVER
   });
 }
 
+
 pub struct Writer
 {
-  pub x_pos : usize,
-  pub y_pos : usize,
-  pub row   : usize,
-  pub col   : usize,
+  pub x_pos: usize,
+  pub y_pos: usize,
+  pub row: usize,
+  pub col: usize,
   pub colour: ColourCode,
   driver: Mutex<Uart>,
 }
@@ -36,9 +37,9 @@ impl Writer
           self.new_line();
         }
 
-        let colour = self.colour_code;
+        let colour = self.colour;
 
-        self.driver.lock().write(Char {
+        self.uart().write(Char {
           point,
           colour,
         });
@@ -63,8 +64,8 @@ impl Writer
   {
     for row in 1..BUF_HEIGHT {
       for col in 0..BUF_WIDTH {
-        let character = self.driver.lock().read().unwrap();
-        self.driver.lock().write(character);
+        let character = self.uart().read().unwrap();
+        self.uart().write(character);
       }
     }
 
@@ -80,7 +81,7 @@ impl Writer
     };
 
     for col in 0..BUF_WIDTH {
-      self.driver.lock().write(blank);
+      self.uart().write(blank);
     }
   }
 
@@ -105,14 +106,14 @@ impl fmt::Write for Writer
 #[macro_export]
 pub macro print
 {
-  ($ ($ arg: tt) *) => ($ crate::_print(format_args!($ ($ arg) *)))
+  ($ ($ arg:tt) *) => ($ crate::_print(format_args!($ ($ arg) *)))
 }
 
 #[macro_export]
 pub macro println
 {
   () => ($ crate::print!("\n")),
-  ($ ($ arg: tt) *) => ($ crate::print!("{}\n", format_args!($ ($ arg) *)))
+  ($ ($ arg:tt) *) => ($ crate::print!("{}\n", format_args!($ ($ arg) *)))
 }
 
 #[doc(hidden)]
@@ -121,7 +122,7 @@ pub fn _print(args: fmt::Arguments)
   use core::fmt::Write;
   GLOBAL_WRITER
       .lock()
-      .uart().lock()
+      .uart()
       .write_fmt(args)
       .unwrap();
 }

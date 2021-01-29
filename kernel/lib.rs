@@ -20,13 +20,22 @@ Trident is a kernel system designed for performance, stability, and modularity.
 // Trident system crate; contains core functionality and an interface with the underlying hardware.
 extern crate t_system as system;
 
+
+use system::alloc::uart;
+
 #[cfg(test)]
 mod test;
 
+/// The Program Entry Point.
+///
+/// All setup for the hardware's resources and the Kernel's internal workings
+/// happens here.
 #[no_mangle]
 #[boot::entry]
 pub extern "Rust" fn kmain() -> !
 {
+  uart::init(0x1000_0000);
+
   loop {
     system::console::println!("Hello world!");
   }

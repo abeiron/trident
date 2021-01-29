@@ -247,52 +247,6 @@ dependencies = [
 ]
 
 [[package]]
-name = "t_alloc"
-version = "0.1.0"
-dependencies = [
- "lazy_static",
- "linked_list_allocator",
- "mopa",
- "spin 0.7.1",
- "trident-sys",
- "volatile",
-]
-
-[[package]]
-name = "t_boot"
-version = "0.1.0"
-dependencies = [
- "r0",
- "riscv",
- "riscv-target",
- "t_macros",
-]
-
-[[package]]
-name = "t_console"
-version = "0.1.0"
-dependencies = [
- "lazy_static",
- "spin 0.7.1",
- "t_alloc",
- "volatile",
-]
-
-[[package]]
-name = "t_core"
-version = "0.1.0"
-
-[[package]]
-name = "t_macros"
-version = "0.1.0"
-dependencies = [
- "proc-macro2",
- "quote",
- "rand",
- "syn",
-]
-
-[[package]]
 name = "thread_local"
 version = "1.1.1"
 source = "registry+https://github.com/rust-lang/crates.io-index"
@@ -302,21 +256,68 @@ dependencies = [
 ]
 
 [[package]]
+name = "trident-alloc"
+version = "0.1.0"
+dependencies = [
+ "lazy_static",
+ "linked_list_allocator",
+ "mopa",
+ "spin 0.7.1",
+ "trident-core",
+ "trident-sys",
+ "volatile",
+]
+
+[[package]]
+name = "trident-boot"
+version = "0.1.0"
+dependencies = [
+ "r0",
+ "riscv",
+ "riscv-target",
+ "trident-macros",
+]
+
+[[package]]
+name = "trident-console"
+version = "0.1.0"
+dependencies = [
+ "lazy_static",
+ "spin 0.7.1",
+ "trident-alloc",
+ "volatile",
+]
+
+[[package]]
+name = "trident-core"
+version = "0.1.0"
+
+[[package]]
 name = "trident-kernel"
 version = "0.1.0"
 dependencies = [
  "lazy_static",
- "t_boot",
+ "trident-boot",
  "trident-sys",
+]
+
+[[package]]
+name = "trident-macros"
+version = "0.1.0"
+dependencies = [
+ "proc-macro2",
+ "quote",
+ "rand",
+ "syn",
 ]
 
 [[package]]
 name = "trident-sys"
 version = "0.1.0"
 dependencies = [
- "t_alloc",
- "t_console",
- "t_core",
+ "trident-alloc",
+ "trident-console",
+ "trident-core",
 ]
 
 [[package]]

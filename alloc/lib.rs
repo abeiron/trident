@@ -6,14 +6,18 @@
 #![feature(allocator_api)]
 #![feature(alloc_error_handler)]
 #![feature(associated_type_defaults)]
+#![feature(coerce_unsized)]
 #![feature(const_fn)]
 #![feature(const_generics)]
 #![feature(const_mut_refs)]
 #![feature(core_intrinsics)]
+#![feature(decl_macro)]
 #![feature(in_band_lifetimes)]
 #![feature(lang_items)]
-#![feature(wrapping_int_impl)]
+#![feature(proc_macro_hygiene)]
 #![feature(range_bounds_assert_len)]
+#![feature(unsize)]
+#![feature(wrapping_int_impl)]
 #![cfg_attr(not(test), no_std)]
 
 pub extern crate spin;
@@ -30,6 +34,7 @@ extern crate mopa;
 ////////// Re-exports ///////////
 /////////////////////////////////
 
+pub use core::any;
 pub use core::borrow;
 pub use core::cell;
 pub use core::cmp;
@@ -37,6 +42,11 @@ pub use core::convert;
 pub use core::fmt;
 pub use core::marker;
 pub use core::pin;
+
+pub use self::alloc::*;
+pub use self::array::Array;
+pub use self::string::String;
+pub use self::string::StringWide;
 
 // END "re-exports" /////////////
 
@@ -53,32 +63,20 @@ extern "C"
   pub static HEAP_SIZE: usize;
 }
 
-/// Access modifiers for Volatile wrapper.
-pub mod access;
+// END "allocation routines" ////
 
 pub mod alloc;
-pub use self::alloc::*;
-
 pub mod array;
-pub use self::array::Array;
-
+pub mod bitflags;
 pub mod collections;
-pub mod comp;
-pub mod ctx;
-pub mod engine;
-pub mod entity;
 pub mod env;
 pub mod hash;
 /*pub mod fmt;*/
-pub mod math;
 pub mod mmio;
-
+pub mod ptr;
 pub mod string;
-pub use self::string::String;
-pub use self::string::StringWide;
-
 pub mod uart;
-pub mod unique;
+pub mod volatile;
 
 /// For the meme.
 mod boobs;

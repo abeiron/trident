@@ -1,16 +1,14 @@
 //! Implements the `Environment` that holds all of the entities.
 
-use core::{
-  any::TypeId,
-  marker::PhantomData,
-  ops::{Deref, DerefMut},
-};
+use core::ops::{Deref, DerefMut};
 
 use crate::{
+  any::{Any, TypeId},
   cell::{Ref, RefMut, TrustCell},
   collections::HashMap,
-  unique::Unq,
+  marker::PhantomData,
 };
+use crate::ptr::unique::Unq;
 
 mod data;
 mod entry;
@@ -149,7 +147,7 @@ impl ResourceId
   
   fn assert_same_type_id<R: Resource>(&self) 
   {
-    let res_id0 = ResourceId::new<R>();
+    let res_id0 = ResourceId::new::<R>();
     assert_eq!(
       res_id0.type_id, self.type_id,
       "Passed a `ResoureId` with a wrong type id"

@@ -7,9 +7,9 @@ edition = "2018"
 # See more keys and their definitions at https://doc.rust-lang.org/cargo/reference/manifest.html
 
 [dependencies]
-t_alloc   = { path = "../alloc", version = "*"}
-t_console = { path = "../console", version = "*" }
-t_core = { path = "../core", version = "*" }
+trident-alloc   = { path = "../alloc", version = "*"}
+trident-console = { path = "../console", version = "*" }
+trident-core = { path = "../core", version = "*" }
 
 [lib]
 name = "t_system"

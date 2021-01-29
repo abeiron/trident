@@ -1,10 +1,7 @@
 # .cargo/config.toml
 
 [target."target.json"]
-rustflags = [
-  "-C", "link-arg=-Tmemory.ld",
-  "-C", "link-arg=-Tlink.ld",
-]
+rustflags = ['-Clink-arg=-Tvirt.lds']
 
 [build]
 target = "target.json"

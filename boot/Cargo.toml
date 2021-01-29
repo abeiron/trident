@@ -1,5 +1,5 @@
 [package]
-name = "t_boot"
+name = "trident-boot"
 version = "0.1.0"
 authors = ["Mnimi Aionios <mechild02@gmail.com>"]
 edition = "2018"
@@ -10,7 +10,7 @@ build = "build.rs"
 [dependencies]
 r0 = "1.0.0"
 riscv = "0.6.0"
-t_macros = { path = "../macros", version = "0.1" }
+trident-macros = { path = "../macros", version = "0.1" }
 
 [build-dependencies]
 riscv-target = "0.1.2"
