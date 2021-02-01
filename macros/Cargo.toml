@@ -11,7 +11,7 @@ proc-macro2 = "1.0.24"
 quote = "1.0.8"
 
 [dependencies.rand]
-version = "0.7.3"
+version = "0.8.3"
 default-features = false
 features = ["small_rng"]
 
