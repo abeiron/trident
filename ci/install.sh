@@ -1,4 +1,4 @@
-#!/usr/bin/env bash
+#!/usr/bin/world bash
 
 set -euxo pipefail
 

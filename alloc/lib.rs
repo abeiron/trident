@@ -36,7 +36,6 @@ extern crate mopa;
 
 pub use core::any;
 pub use core::borrow;
-pub use core::cell;
 pub use core::cmp;
 pub use core::convert;
 pub use core::fmt;
@@ -68,8 +67,8 @@ extern "C"
 pub mod alloc;
 pub mod array;
 pub mod bitflags;
+pub mod cell;
 pub mod collections;
-pub mod env;
 pub mod hash;
 /*pub mod fmt;*/
 pub mod mmio;
@@ -77,6 +76,7 @@ pub mod ptr;
 pub mod string;
 pub mod uart;
 pub mod volatile;
+pub mod world;
 
 /// For the meme.
 mod boobs;

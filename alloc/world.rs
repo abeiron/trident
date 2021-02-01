@@ -1,13 +1,12 @@
 //! Implements the `Environment` that holds all of the entities.
 
-use core::ops::{Deref, DerefMut};
-
-use crate::{
+use core::{
   any::{Any, TypeId},
-  cell::{Ref, RefMut, TrustCell},
-  collections::HashMap,
+  cell::{Ref, RefMut},
   marker::PhantomData,
+  ops::{Deref, DerefMut},
 };
+
 use crate::ptr::unique::Unq;
 
 mod data;
