@@ -1,5 +1,6 @@
 //! Memory allocations layout.
 
+use core::fmt::{self, Display};
 use core::mem::{size_of, align_of};
 
 /// Defines the layout of memory to be allocated.
@@ -62,5 +63,16 @@ impl Layout
   pub fn align(&self) -> usize
   {
     self.align
+  }
+}
+
+#[derive(Debug)]
+pub struct LayoutErr;
+
+impl Display for LayoutErr
+{
+  fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result
+  {
+    write!(f, "An error occurred for the requested layout")
   }
 }

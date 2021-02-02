@@ -74,6 +74,7 @@ pub mod atomic;
 pub mod bitflags;
 pub mod cell;
 pub mod collections;
+pub mod error;
 pub mod hash;
 /*pub mod fmt;*/
 pub mod mmio;

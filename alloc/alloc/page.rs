@@ -2,8 +2,8 @@ use core::cmp::min;
 use core::ffi::c_void;
 use core::ptr::{NonNull, null_mut};
 
-use crate::{_heap_size, _heap_start, Layout};
-use crate::alloc::AllocRef;
+use crate::{_heap_size, _heap_start, alloc::{AllocRef, Layout}};
+
 
 pub mod entry;
 
@@ -132,7 +132,7 @@ impl PageAlloc
     for i in (level..2).rev() {
       if !v.is_valid() {
         // Allocate a page
-        let page = unsafe { self.zalloc(Layout::new(1)).unwrap() };
+        let page = unsafe { self.zalloc(1).unwrap() };
         // The page is already aligned by 4,096, so store it
         // directly The page is stored in the entry shifted
         // right by 2 places.
@@ -190,10 +190,10 @@ impl PageAlloc
               let memaddr_lv0 = (entry_lv1.get_entry()
                   & !0x3ff) << 2;
 
-              self.dealloc(memaddr_lv0 as *mut c_void, Layout::new(entry_lv1.len()));
+              self.dealloc(memaddr_lv0 as *mut u8, Layout::from_size(entry_lv1.len()));
             }
           }
-          self.dealloc(memaddr_lv1 as *mut c_void, Layout::new(entry_lv2.len()));
+          self.dealloc(memaddr_lv1 as *mut u8, Layout::from_size(entry_lv2.len()));
         }
       }
     }
@@ -248,23 +248,23 @@ impl PageAlloc
 
 unsafe impl AllocRef for PageAlloc
 {
-  unsafe fn alloc(&self, layout: Layout) -> Option<NonNull<c_void>>
+  unsafe fn alloc(&self, layout: Layout) -> Option<NonNull<u8>>
   {
     // Need to find a contiguous allocation of pages.
-    assert!(layout.size > 0);
+    assert!(layout.size() > 0);
     // We create a Page structure for each page on the heap.
     // We actually might have more since HEAP_SIZE moves as
     // well as the size of our structure, but we'll only waste a few bytes.
     let num_pages = _heap_size / PAGE_SIZE;
     let ptr = _heap_start as *mut Page;
-    for i in 0..num_pages - layout.size {
+    for i in 0..num_pages - layout.size() {
       let mut found = false;
       // Check to see if this Page is free.
       // If so, we have our first candidate memory address.
       if (*ptr.add(i)).is_free() {
         // It was free!
         found = true;
-        for j in i..i + layout.size {
+        for j in i..i + layout.size() {
           // Now check to see if we have a contiguous allocation
           // for all of the requested pages.
           // If not, we should check elsewhere.
@@ -279,14 +279,14 @@ unsafe impl AllocRef for PageAlloc
       // If we couldn't, 'found' will be false, otherwise it will be true.
       // Which means that we've found valid memory that we can allocate.
       if found {
-        for k in i..i + layout.size - 1 {
+        for k in i..i + layout.size() - 1 {
           (*ptr.add(k)).set_flag(PageBits::Taken);
         }
 
-        (*ptr.add(i + layout.size - 1)).set_flag(PageBits::Taken);
-        (*ptr.add(i + layout.size - 1)).set_flag(PageBits::Taken);
+        (*ptr.add(i + layout.size() - 1)).set_flag(PageBits::Taken);
+        (*ptr.add(i + layout.size() - 1)).set_flag(PageBits::Taken);
 
-        return Some(NonNull::new_unchecked((ALLOC_START + PAGE_SIZE * i) as *mut c_void));
+        return Some(NonNull::new_unchecked((ALLOC_START + PAGE_SIZE * i) as *mut u8));
       }
     }
 
@@ -294,73 +294,46 @@ unsafe impl AllocRef for PageAlloc
     None
   }
 
-  unsafe fn dealloc(&self, ptr: *mut c_void, layout: Layout)
+  unsafe fn dealloc(&self, ptr: *mut u8, layout: Layout)
   {
     // Make sure we don't try to free a null pointer.
     assert!(!ptr.is_null());
-    unsafe {
-      let addr =
-          _heap_start + (ptr as usize - ALLOC_START) / PAGE_SIZE;
-      // Make sure that the address makes sense. The address we
-      // calculate here is the page structure, not the HEAP address!
-      assert!(addr >= _heap_start && addr < ALLOC_START);
-      let mut p = addr as *mut Page;
-      // println!("PTR in is {:p}, addr is 0x{:x}", ptr, addr);
-      assert!((*p).is_taken(), "Freeing a non-taken page?");
-      // Keep clearing pages until we hit the last page.
-      while (*p).is_taken() && !(*p).is_last() {
-        (*p).clear();
-        p = p.add(1);
-      }
-      // If the following assertion fails, it is most likely
-      // caused by a double-free.
-      assert!(
-        (*p).is_last() == true,
-        "Possible double-free detected! (Not taken found \
-		         before last)"
-      );
-      // If we get here, we've taken care of all previous pages and
-      // we are on the last page.
+    let addr =
+        _heap_start + (ptr as usize - ALLOC_START) / PAGE_SIZE;
+    // Make sure that the address makes sense. The address we
+    // calculate here is the page structure, not the HEAP address!
+    assert!(addr >= _heap_start && addr < ALLOC_START);
+    let mut p = addr as *mut Page;
+    // println!("PTR in is {:p}, addr is 0x{:x}", ptr, addr);
+    assert!((*p).is_taken(), "Freeing a non-taken page?");
+    // Keep clearing pages until we hit the last page.
+    while (*p).is_taken() && !(*p).is_last() {
       (*p).clear();
+      p = p.add(1);
     }
+    // If the following assertion fails, it is most likely
+    // caused by a double-free.
+    assert!(
+      (*p).is_last() == true,
+      "Possible double-free detected! (Not taken found \
+		         before last)"
+    );
+    // If we get here, we've taken care of all previous pages and
+    // we are on the last page.
+    (*p).clear();
   }
 
-  unsafe fn realloc(&self, ptr: *mut c_void, old_size: usize, layout: Layout) -> Option<NonNull<c_void>>
+  unsafe fn realloc(&self, ptr: *mut u8, old_size: usize, layout: Layout) -> Option<NonNull<u8>>
   {
     let new_ptr = self.alloc(layout);
     if new_ptr.is_none() {
       return new_ptr;
     } else {
-      unsafe {
-        ptr::copy(ptr, new_ptr, min(layout.size, old_size));
-      }
+      ptr::copy(ptr, new_ptr, min(layout.size(), old_size));
 
       self.dealloc(ptr, layout);
+
       new_ptr
     }
-  }
-
-  unsafe fn zalloc(&self, layout: Layout) -> Option<NonNull<c_void>>
-  {
-    // Allocate and zero a page.
-    // First, let's get the allocation.
-    let ret = self.alloc(layout);
-    if let Some(a) = ret {
-      let size = (PAGE_SIZE * layout.size) / 8;
-      let big_ptr = ret.unwrap() as *mut u64;
-      for i in 0..size {
-        // We use big_ptr so that we can force a
-        // sd (store doubleword) instruction rather than
-        // the sb. This means 8 times fewer stores than before.
-        // Typically, we have to be concerned about remaining
-        // bytes, but fortunately 4096 % 8 = 0, so we won't
-        // have any remaining bytes.
-        unsafe {
-          (*big_ptr.add(i)) = 0;
-        }
-      }
-    }
-
-    ret
   }
 }

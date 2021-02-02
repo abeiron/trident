@@ -1,4 +1,4 @@
-use crate::alloc::page::entry::Entry;
+use super::entry::Entry;
 
 pub struct Table
 {

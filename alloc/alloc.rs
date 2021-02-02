@@ -4,6 +4,7 @@ Defines the `AllocRef` trait as a framework for memory allocation.
 
 use core::cell::RefCell;
 use core::ffi::c_void;
+use core::fmt::{self, Display};
 use core::mem::size_of;
 use core::ptr::{NonNull, read_unaligned, write_unaligned};
 
@@ -77,6 +78,17 @@ pub fn align_up(addr: usize, align: usize) -> usize
   }
 }
 
+#[derive(Debug)]
+pub struct AllocErr;
+
+impl Display for AllocErr
+{
+  fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result
+  {
+    write!(f, "An error occurred in allocating the requested memory")
+  }
+}
+
 /// The "AllocRef" trait.
 ///
 /// Defines the framework for an allocator.
@@ -98,7 +110,7 @@ pub unsafe trait AllocRef
 
   /// Allocate a zero a page or multiple pages.
   ///
-  /// pages: the number of pages to allocate.
+  /// `pages`: the number of pages to allocate.
   ///
   /// Each page is `PAGE_SIZE` which is calculated as 1 << `PAGE_ORDER`.
   /// On RISC-V, this is typically 4096 bytes.
@@ -106,8 +118,8 @@ pub unsafe trait AllocRef
   {
     let size = (PAGE_SIZE * pages) / 8;
     let ret = self.alloc(Layout::from_size(size));
-    if !ret.is_none() {
-      let big_ptr = ret.unwrap() as *mut u64;
+    if let Some(z) = ret {
+      let big_ptr = z as *mut u64;
       for i in 0..size {
         // We use big_ptr so that we can force an
         // sd (store doubleword) instruction rather than
