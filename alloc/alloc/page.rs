@@ -2,8 +2,8 @@ use core::cmp::min;
 use core::ffi::c_void;
 use core::ptr::{NonNull, null_mut};
 
-use crate::{HEAP_SIZE, HEAP_START, Layout};
-use crate::alloc::Allocator;
+use crate::{_heap_size, _heap_start, Layout};
+use crate::alloc::AllocRef;
 
 pub mod entry;
 
@@ -246,7 +246,7 @@ impl PageAlloc
   }
 }
 
-unsafe impl Allocator for PageAlloc
+unsafe impl AllocRef for PageAlloc
 {
   unsafe fn alloc(&self, layout: Layout) -> Option<NonNull<c_void>>
   {
@@ -255,8 +255,8 @@ unsafe impl Allocator for PageAlloc
     // We create a Page structure for each page on the heap.
     // We actually might have more since HEAP_SIZE moves as
     // well as the size of our structure, but we'll only waste a few bytes.
-    let num_pages = HEAP_SIZE / PAGE_SIZE;
-    let ptr = HEAP_START as *mut Page;
+    let num_pages = _heap_size / PAGE_SIZE;
+    let ptr = _heap_start as *mut Page;
     for i in 0..num_pages - layout.size {
       let mut found = false;
       // Check to see if this Page is free.
@@ -300,10 +300,10 @@ unsafe impl Allocator for PageAlloc
     assert!(!ptr.is_null());
     unsafe {
       let addr =
-          HEAP_START + (ptr as usize - ALLOC_START) / PAGE_SIZE;
+          _heap_start + (ptr as usize - ALLOC_START) / PAGE_SIZE;
       // Make sure that the address makes sense. The address we
       // calculate here is the page structure, not the HEAP address!
-      assert!(addr >= HEAP_START && addr < ALLOC_START);
+      assert!(addr >= _heap_start && addr < ALLOC_START);
       let mut p = addr as *mut Page;
       // println!("PTR in is {:p}, addr is 0x{:x}", ptr, addr);
       assert!((*p).is_taken(), "Freeing a non-taken page?");

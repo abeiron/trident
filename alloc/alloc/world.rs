@@ -7,7 +7,7 @@ use core::{
   ops::{Deref, DerefMut},
 };
 
-use crate::ptr::unique::Unq;
+use crate::unique::Unq;
 
 mod data;
 mod entry;

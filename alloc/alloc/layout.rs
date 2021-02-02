@@ -7,30 +7,30 @@ use core::mem::{size_of, align_of};
 pub struct Layout
 {
   #[doc(hidden)]
-  pub size: usize,
+  size: usize,
   #[doc(hidden)]
-  pub align: usize,
+  align: usize,
 }
 
 impl Layout
 {
   /// Creates a new instance of a Layout.
   #[inline]
-  pub fn new(size: usize) -> Self
+  pub fn new<T>() -> Self
   {
     Layout {
-      size,
-      align: 4,
+      size: size_of::<T>(),
+      align: align_of::<T>(),
     }
   }
 
   /// Creates a new instance of a Layout from the supplied type.
   #[inline]
-  pub fn from_type<T>() -> Self
+  pub fn from_size(size: usize) -> Self
   {
     Layout {
-      size: size_of::<T>(),
-      align: align_of::<T>(),
+      size,
+      align: 4,
     }
   }
 
@@ -45,10 +45,22 @@ impl Layout
   }
 
   /// Realigns data.
-  #[inline]
+  #[inline(always)]
   pub fn align_up(&self, i: usize) -> usize
   {
     let p = i + self.align - 1;
     return p - (p % self.align);
+  }
+
+  #[inline]
+  pub fn size(&self) -> usize
+  {
+    self.size
+  }
+
+  #[inline]
+  pub fn align(&self) -> usize
+  {
+    self.align
   }
 }

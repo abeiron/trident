@@ -5,7 +5,7 @@ use core::{
 };
 
 use crate::{
-  alloc::{Allocator, Global},
+  alloc::{AllocRef, Global},
   array::Array,
   hash::SipHash,
 };
@@ -88,13 +88,13 @@ struct HashMapInner<K, V, A>
   where
       K: Sized + Eq + Hash,
       V: Sized,
-      A: Allocator + Clone,
+      A: AllocRef + Clone,
 {
   sb: Array<ShortBucket, A>,
   buckets: Array<Option<Bucket<K, V>>, A>,
 }
 
-impl<K: Hash + PartialEq + Eq, V, A: Allocator + Clone> HashMapInner<K, V, A>
+impl<K: Hash + PartialEq + Eq, V, A: AllocRef + Clone> HashMapInner<K, V, A>
 {
   fn new_with(alloc: A) -> Self
   {
@@ -290,7 +290,7 @@ pub struct HashMap<K, V, A = Global>
   where
       K: Sized + Eq + Hash,
       V: Sized,
-      A: Allocator + Clone,
+      A: AllocRef + Clone,
 {
   alloc: A,
   hash: BuildHasherDefault<SipHash>,
@@ -301,7 +301,7 @@ impl<K, V, A> HashMap<K, V, A>
   where
       K: Sized + Eq + Hash,
       V: Sized,
-      A: Allocator + Clone,
+      A: AllocRef + Clone,
 {
   pub fn new_with(alloc: A) -> Self
   {

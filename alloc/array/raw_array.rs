@@ -1,9 +1,9 @@
 use core::{ffi::c_void, marker::PhantomData, mem::size_of, ptr::null_mut};
 use crate::{
-  alloc::{alloc_array, Allocator, Layout},
+  alloc::{alloc_array, AllocRef, Layout},
 };
 
-pub(crate) struct RawArray<T, A: Allocator>
+pub(crate) struct RawArray<T, A: AllocRef>
 {
   pub(crate) ptr: *mut T,
   pub(crate) capacity: usize,
@@ -11,7 +11,7 @@ pub(crate) struct RawArray<T, A: Allocator>
   _phantom: PhantomData<T>,
 }
 
-impl<T, A: Allocator> RawArray<T, A>
+impl<T, A: AllocRef> RawArray<T, A>
 {
   pub(crate) fn new(alloc: A) -> Self
   {
@@ -51,7 +51,7 @@ impl<T, A: Allocator> RawArray<T, A>
   }
 }
 
-impl<T, A: Allocator> Drop for RawArray<T, A>
+impl<T, A: AllocRef> Drop for RawArray<T, A>
 {
   fn drop(&mut self)
   {

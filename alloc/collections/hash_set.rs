@@ -1,14 +1,14 @@
 use core::{borrow::Borrow, hash::*};
 
 use crate::{
-  alloc::{Allocator, Global},
+  alloc::{AllocRef, Global},
   collections::HashMap,
 };
 
 pub struct HashSet<T, A = Global>
   where
       T: Sized + Eq + Hash,
-      A: Allocator + Clone,
+      A: AllocRef + Clone,
 {
   map: HashMap<T, (), A>,
 }
@@ -16,7 +16,7 @@ pub struct HashSet<T, A = Global>
 impl<T, A> HashSet<T, A>
   where
       T: Sized + Eq + Hash,
-      A: Allocator + Clone,
+      A: AllocRef + Clone,
 {
   pub fn new_with(alloc: A) -> Self
   {

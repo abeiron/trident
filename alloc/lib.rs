@@ -20,6 +20,10 @@
 #![feature(wrapping_int_impl)]
 #![cfg_attr(not(test), no_std)]
 
+/////////////////////////////////
+/////// Dependencies ////////////
+/////////////////////////////////
+
 pub extern crate spin;
 pub extern crate volatile;
 
@@ -30,24 +34,19 @@ extern crate linked_list_allocator;
 #[macro_use]
 extern crate mopa;
 
+// END "dependencies" ///////////
+//-------------------------------
+
 /////////////////////////////////
 ////////// Re-exports ///////////
 /////////////////////////////////
 
-pub use core::any;
-pub use core::borrow;
-pub use core::cmp;
-pub use core::convert;
-pub use core::fmt;
-pub use core::marker;
-pub use core::pin;
-
-pub use self::alloc::*;
 pub use self::array::Array;
 pub use self::string::String;
 pub use self::string::StringWide;
 
 // END "re-exports" /////////////
+//-------------------------------
 
 /////////////////////////////////
 ////// Allocation routines //////
@@ -56,16 +55,22 @@ pub use self::string::StringWide;
 extern "C"
 {
   /// The starting point designation for the Heap
-  pub static HEAP_START: usize;
+  pub static _heap_start: usize;
 
   /// The overall size of the Heap
-  pub static HEAP_SIZE: usize;
+  pub static _heap_size: usize;
 }
 
 // END "allocation routines" ////
+//-------------------------------
+
+/////////////////////////////////
+/////////// Modules /////////////
+/////////////////////////////////
 
 pub mod alloc;
 pub mod array;
+pub mod atomic;
 pub mod bitflags;
 pub mod cell;
 pub mod collections;
@@ -73,10 +78,11 @@ pub mod hash;
 /*pub mod fmt;*/
 pub mod mmio;
 pub mod ptr;
+pub mod shared;
 pub mod string;
 pub mod uart;
+pub mod unique;
 pub mod volatile;
-pub mod world;
 
-/// For the meme.
-mod boobs;
+// END "modules" ////////////////
+//-------------------------------

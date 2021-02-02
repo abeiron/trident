@@ -1,7 +1,7 @@
 //! Implements an allocator-aware smart pointer called `Unq`.
 
 use crate::{
-  alloc::{alloc_one, Allocator, Global},
+  alloc::{alloc_one, AllocRef, Global},
   borrow::{Borrow, BorrowMut},
   convert::{AsMut, AsRef},
   marker::{PhantomData, Unsize},
@@ -21,14 +21,14 @@ use core::ptr::{drop_in_place, write, NonNull};
 /// ```
 /// 
 /// TODO: Write better documentation.
-pub struct Unq<T: ?Sized, A: Allocator = Global>
+pub struct Unq<T: ?Sized, A: AllocRef = Global>
 {
   ptr: NonNull<T>,
   alloc: A,
   _ghost: PhantomData<T>,
 }
 
-impl<T, A: Allocator> Unq<T, A>
+impl<T, A: AllocRef> Unq<T, A>
 {
   pub fn new_with(val: T, mut alloc: A) -> Self
   {
@@ -51,7 +51,7 @@ impl<T, A: Allocator> Unq<T, A>
   }
 }
 
-impl<T: ?Sized, A: Allocator> Unq<T, A>
+impl<T: ?Sized, A: AllocRef> Unq<T, A>
 {
   pub unsafe fn from_raw_with(ptr: NonNull<T>, alloc: A) -> Self
   {
@@ -101,7 +101,7 @@ impl<T: ?Sized> Unq<T, Global>
   }
 }
 
-impl<T: ?Sized, A: Allocator> Deref for Unq<T, A>
+impl<T: ?Sized, A: AllocRef> Deref for Unq<T, A>
 {
   type Target = T;
   
@@ -112,7 +112,7 @@ impl<T: ?Sized, A: Allocator> Deref for Unq<T, A>
   }
 }
 
-impl<T: ?Sized, A: Allocator> DerefMut for Unq<T, A>
+impl<T: ?Sized, A: AllocRef> DerefMut for Unq<T, A>
 {
   #[inline]
   fn deref_mut(&mut self) -> &mut Self::Target
@@ -121,7 +121,7 @@ impl<T: ?Sized, A: Allocator> DerefMut for Unq<T, A>
   }
 }
 
-impl<T: ?Sized, A: Allocator> AsRef<T> for Unq<T, A>
+impl<T: ?Sized, A: AllocRef> AsRef<T> for Unq<T, A>
 {
   #[inline]
   fn as_ref(&self) -> &T
@@ -130,7 +130,7 @@ impl<T: ?Sized, A: Allocator> AsRef<T> for Unq<T, A>
   }
 }
 
-impl<T: ?Sized, A: Allocator> AsMut<T> for Unq<T, A>
+impl<T: ?Sized, A: AllocRef> AsMut<T> for Unq<T, A>
 {
   #[inline]
   fn as_mut(&mut self) -> &mut T
@@ -139,7 +139,7 @@ impl<T: ?Sized, A: Allocator> AsMut<T> for Unq<T, A>
   }
 }
 
-impl<T: ?Sized, A: Allocator> Borrow<T> for Unq<T, A>
+impl<T: ?Sized, A: AllocRef> Borrow<T> for Unq<T, A>
 {
   #[inline]
   fn borrow(&self) -> &T
@@ -148,7 +148,7 @@ impl<T: ?Sized, A: Allocator> Borrow<T> for Unq<T, A>
   }
 }
 
-impl<T: ?Sized, A: Allocator> BorrowMut<T> for Unq<T, A>
+impl<T: ?Sized, A: AllocRef> BorrowMut<T> for Unq<T, A>
 {
   #[inline]
   fn borrow_mut(&mut self) -> &mut T
@@ -157,7 +157,7 @@ impl<T: ?Sized, A: Allocator> BorrowMut<T> for Unq<T, A>
   }
 }
 
-impl<T: ?Sized, A: Allocator> Drop for Unq<T, A>
+impl<T: ?Sized, A: AllocRef> Drop for Unq<T, A>
 {
   #[inline]
   fn drop(&mut self)
@@ -169,7 +169,7 @@ impl<T: ?Sized, A: Allocator> Drop for Unq<T, A>
   }
 }
 
-impl<T: ?Sized + Unsize<U>, U: ?Sized, A: Allocator> CoerceUnsized<Unq<U, A>> for Unq<T, A> {}
+impl<T: ?Sized + Unsize<U>, U: ?Sized, A: AllocRef> CoerceUnsized<Unq<U, A>> for Unq<T, A> {}
 
-impl<T: ?Sized, A: Allocator> Unpin for Unq<T, A> {}
+impl<T: ?Sized, A: AllocRef> Unpin for Unq<T, A> {}
 

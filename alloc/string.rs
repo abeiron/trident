@@ -3,7 +3,7 @@
 //------------------------------------------------------------
 //String: A growable UTF-8 string.
 
-use crate::alloc::{Allocator, Global};
+use crate::alloc::{AllocRef, Global};
 use crate::array::Array;
 
 use core::borrow::Borrow;
@@ -16,13 +16,13 @@ use core::str;
 
 
 /// Represents a growable UTF-8 encoded string.
-pub struct String<A: Allocator = Global>
+pub struct String<A: AllocRef = Global>
 {
   buf: Array<u8, A>,
 }
 
 
-impl<A: Allocator> String<A>
+impl<A: AllocRef> String<A>
 {
   /// Initialises an empty String with the specified allocator `A`
   ///
@@ -83,7 +83,7 @@ impl<A: Allocator> String<A>
   }
 }
 
-impl<A: Allocator> core::convert::TryFrom<Array<u8, A>> for String<A>
+impl<A: AllocRef> core::convert::TryFrom<Array<u8, A>> for String<A>
 {
   type Error = core::str::Utf8Error;
 
@@ -129,7 +129,7 @@ impl String<Global>
   }
 }
 
-impl<A: Allocator> AsRef<str> for String<A>
+impl<A: AllocRef> AsRef<str> for String<A>
 {
   /// References the current `String` as a `&str`.
   #[inline]
@@ -139,7 +139,7 @@ impl<A: Allocator> AsRef<str> for String<A>
   }
 }
 
-impl<A: Allocator> Borrow<str> for String<A>
+impl<A: AllocRef> Borrow<str> for String<A>
 {
   /// Borrows the current `String` as `&str`.
   #[inline]
@@ -149,7 +149,7 @@ impl<A: Allocator> Borrow<str> for String<A>
   }
 }
 
-impl<A: Allocator> Deref for String<A>
+impl<A: AllocRef> Deref for String<A>
 {
   type Target = str;
 
@@ -174,7 +174,7 @@ impl<A: Allocator> Deref for String<A>
   }
 }
 
-impl<A: Allocator> DerefMut for String<A>
+impl<A: AllocRef> DerefMut for String<A>
 {
   /// Dereferences the current `String` into a mutable `&str`.
   #[inline]
@@ -184,7 +184,7 @@ impl<A: Allocator> DerefMut for String<A>
   }
 }
 
-impl<A: Allocator> fmt::Display for String<A>
+impl<A: AllocRef> fmt::Display for String<A>
 {
   // allows println!() to work
   fn fmt(&self, f: &mut fmt::Formatter) -> fmt::Result
@@ -193,7 +193,7 @@ impl<A: Allocator> fmt::Display for String<A>
   }
 }
 
-impl<A: Allocator> fmt::Debug for String<A>
+impl<A: AllocRef> fmt::Debug for String<A>
 {
   fn fmt(&self, f: &mut fmt::Formatter) -> fmt::Result
   {
@@ -203,7 +203,7 @@ impl<A: Allocator> fmt::Debug for String<A>
 
 impl<A, T> PartialEq<T> for String<A>
   where
-      A: Allocator,
+      A: AllocRef,
       T: AsRef<str>,
 {
   #[inline]
@@ -213,9 +213,9 @@ impl<A, T> PartialEq<T> for String<A>
   }
 }
 
-impl<A: Allocator> Eq for String<A> {}
+impl<A: AllocRef> Eq for String<A> {}
 
-impl<A: Allocator> Hash for String<A>
+impl<A: AllocRef> Hash for String<A>
 {
   fn hash<H: Hasher>(&self, h: &mut H)
   {
@@ -227,12 +227,12 @@ impl<A: Allocator> Hash for String<A>
 //StringWide: A growable UTF-16 string.
 
 /// Represents a growable, UTF-16-encoded String.
-pub struct StringWide<A: Allocator = Global>
+pub struct StringWide<A: AllocRef = Global>
 {
   buf: Array<u16, A>,
 }
 
-impl<A: Allocator> StringWide<A>
+impl<A: AllocRef> StringWide<A>
 {
   /// Initialises an empty `StringWide` with the specified allocator, `A`.
   ///
@@ -326,7 +326,7 @@ impl StringWide<Global>
   }
 }
 
-impl<A: Allocator> AsRef<[u16]> for StringWide<A>
+impl<A: AllocRef> AsRef<[u16]> for StringWide<A>
 {
   #[inline]
   fn as_ref(&self) -> &[u16]
@@ -335,7 +335,7 @@ impl<A: Allocator> AsRef<[u16]> for StringWide<A>
   }
 }
 
-impl<A: Allocator> Deref for StringWide<A>
+impl<A: AllocRef> Deref for StringWide<A>
 {
   type Target = [u16];
 
@@ -346,7 +346,7 @@ impl<A: Allocator> Deref for StringWide<A>
   }
 }
 
-impl<A: Allocator> DerefMut for StringWide<A>
+impl<A: AllocRef> DerefMut for StringWide<A>
 {
   #[inline]
   fn deref_mut(&mut self) -> &mut [u16]

@@ -7,7 +7,7 @@
 #![cfg_attr(not(test), no_std)]
 
 extern crate t_alloc as alloc;
-pub extern crate backtracer as bt;
+extern crate backtracer as bt;
 
 //--------------------------------------------------------------------------------------------------
 // Modules /////////////////////////////////////////////////////////////////////////////////////////

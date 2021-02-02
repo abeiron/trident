@@ -14,15 +14,15 @@ use self::raw_array::RawArray;
 mod small_array;
 pub use self::small_array::SmallArray;
 
-use crate::alloc::{Allocator, Global, Layout};
+use crate::alloc::{AllocRef, Global, Layout};
 
-pub struct Array<T, A: Allocator = Global>
+pub struct Array<T, A: AllocRef = Global>
 {
   size: usize,
   buf: RawArray<T, A>,
 }
 
-impl<T, A: Allocator> Array<T, A>
+impl<T, A: AllocRef> Array<T, A>
 {
   pub fn new_with(alloc: A) -> Self
   {
@@ -167,7 +167,7 @@ impl<T> Array<T, Global>
   }
 }
 
-impl<T, A: Allocator> Drop for Array<T, A>
+impl<T, A: AllocRef> Drop for Array<T, A>
 {
   fn drop(&mut self)
   {
@@ -177,7 +177,7 @@ impl<T, A: Allocator> Drop for Array<T, A>
   }
 }
 
-impl<T, A: Allocator> Deref for Array<T, A>
+impl<T, A: AllocRef> Deref for Array<T, A>
 {
   type Target = [T];
 
@@ -188,7 +188,7 @@ impl<T, A: Allocator> Deref for Array<T, A>
   }
 }
 
-impl<T, A: Allocator> DerefMut for Array<T, A>
+impl<T, A: AllocRef> DerefMut for Array<T, A>
 {
   fn deref_mut(&mut self) -> &mut Self::Target
   {
@@ -196,7 +196,7 @@ impl<T, A: Allocator> DerefMut for Array<T, A>
   }
 }
 
-impl<T, A: Allocator> Extend<T> for Array<T, A>
+impl<T, A: AllocRef> Extend<T> for Array<T, A>
 {
   fn extend<I>(&mut self, iter: I)
     where
@@ -208,7 +208,7 @@ impl<T, A: Allocator> Extend<T> for Array<T, A>
   }
 }
 
-impl<'a, T: 'a, A: Allocator> Extend<&'a T> for Array<T, A>
+impl<'a, T: 'a, A: AllocRef> Extend<&'a T> for Array<T, A>
   where
       T: Clone,
 {
@@ -223,7 +223,7 @@ impl<'a, T: 'a, A: Allocator> Extend<&'a T> for Array<T, A>
   }
 }
 
-impl<T, A: Allocator> FromIterator<T> for Array<T, A>
+impl<T, A: AllocRef> FromIterator<T> for Array<T, A>
   where
       A: Default,
 {
@@ -237,14 +237,14 @@ impl<T, A: Allocator> FromIterator<T> for Array<T, A>
   }
 }
 
-pub struct IntoIter<T, A: Allocator>
+pub struct IntoIter<T, A: AllocRef>
 {
   inner: Array<T, A>,
   current: usize,
   size: usize,
 }
 
-impl<T, A: Allocator> Iterator for IntoIter<T, A>
+impl<T, A: AllocRef> Iterator for IntoIter<T, A>
 {
   type Item = T;
 
@@ -269,7 +269,7 @@ impl<T, A: Allocator> Iterator for IntoIter<T, A>
   }
 }
 
-impl<T, A: Allocator> Drop for IntoIter<T, A>
+impl<T, A: AllocRef> Drop for IntoIter<T, A>
 {
   fn drop(&mut self)
   {

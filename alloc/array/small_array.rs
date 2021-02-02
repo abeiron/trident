@@ -1,5 +1,5 @@
 use crate::{
-  alloc::{Allocator, Global},
+  alloc::{AllocRef, Global},
 };
 
 use super::Array;
@@ -23,7 +23,7 @@ pub trait StackArray
 enum SmallArrayData<S, A = Global>
   where
       S: StackArray,
-      A: Allocator,
+      A: AllocRef,
 {
   Stack(usize, ManuallyDrop<S>),
   Heap(Array<S::Element, A>),
@@ -32,7 +32,7 @@ enum SmallArrayData<S, A = Global>
 pub struct SmallArray<S, A = Global>
   where
       S: StackArray,
-      A: Allocator,
+      A: AllocRef,
 {
   alloc: Option<A>,
   data: SmallArrayData<S, A>,
@@ -41,7 +41,7 @@ pub struct SmallArray<S, A = Global>
 impl<S, A> SmallArray<S, A>
   where
       S: StackArray,
-      A: Allocator,
+      A: AllocRef,
 {
   #[inline]
   pub fn len(&self) -> usize
@@ -237,7 +237,7 @@ impl<S, A> SmallArray<S, A>
 impl<S, A> Drop for SmallArray<S, A>
   where
       S: StackArray,
-      A: Allocator,
+      A: AllocRef,
 {
   fn drop(&mut self)
   {
@@ -248,7 +248,7 @@ impl<S, A> Drop for SmallArray<S, A>
 impl<S, A> Deref for SmallArray<S, A>
   where
       S: StackArray,
-      A: Allocator,
+      A: AllocRef,
 {
   type Target = [S::Element];
 
@@ -263,7 +263,7 @@ impl<S, A> Deref for SmallArray<S, A>
 impl<S, A> DerefMut for SmallArray<S, A>
   where
       S: StackArray,
-      A: Allocator,
+      A: AllocRef,
 {
   #[inline]
   fn deref_mut(&mut self) -> &mut Self::Target
@@ -283,7 +283,7 @@ impl<S> SmallArray<S, Global>
   }
 }
 
-impl<T, S, A: Allocator> Extend<T> for SmallArray<S, A>
+impl<T, S, A: AllocRef> Extend<T> for SmallArray<S, A>
   where
       T: Borrow<S::Element>,
       S: StackArray,
