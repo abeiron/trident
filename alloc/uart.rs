@@ -33,8 +33,6 @@ impl Uart
 
   /// Read from the UART.
   pub fn read<T>(&self) -> Option<T>
-  where
-      T: Copy,
   {
     let ptr = self.base as *mut u8;
     unsafe {
