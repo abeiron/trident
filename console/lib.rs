@@ -14,9 +14,10 @@ extern crate t_alloc as alloc;
 extern crate lazy_static;
 extern crate volatile;
 
-pub(crate) mod colour;
-pub(crate) mod text;
-pub(crate) mod write;
+pub mod colour;
+pub mod con;
+pub mod text;
+pub mod write;
 mod panic;
 
 pub use self::colour::{Colour, ColourCode};
