@@ -10,7 +10,7 @@ edition = "2018"
 lazy_static = { version = "1.4.0", features = ["spin_no_std"] }
 linked_list_allocator = { version = "0.8", features = ["use_spin"] }
 mopa = { version = "0.2", features = ["no_std"] }
-spin = "0.7.1"
+spin = "0.9.0"
 volatile = "0.4.3"
 
 [dev-dependencies]
